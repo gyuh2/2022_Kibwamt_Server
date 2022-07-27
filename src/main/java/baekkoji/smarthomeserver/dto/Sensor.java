@@ -46,11 +46,11 @@ public class Sensor
 
     public void APIData(String day)
     {
-        StringBuffer Tmpresult = new StringBuffer();
+        StringBuffer Tempresult = new StringBuffer();
         try{
             StringBuilder urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
                     "getUltraSrtNcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
-                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220711&base_time=1200&nx=60&ny=127");
+                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220727&base_time=1200&nx=60&ny=127");
             //날짜랑 시간 어떻게 해야할지 의논해야함. 공공데이터 업로드가 어떤 기준으로 되는지 알아보고 매개변수로 받든. 현재시간을 입력하든 알아서.
             URL url = new URL(urlBuilder_tmp.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -63,13 +63,13 @@ public class Sensor
             }
             String line;
             while ((line = rd.readLine()) != null) {
-                Tmpresult.append(line + "\n");
+                Tempresult.append(line + "\n");
             }
             rd.close();
             conn.disconnect();
             ObjectMapper objectMapper = new ObjectMapper();
             try{
-                JsonNode jsonNode = objectMapper.readTree(String.valueOf(Tmpresult));
+                JsonNode jsonNode = objectMapper.readTree(String.valueOf(Tempresult));
                 this.setAPI_humid(jsonNode.get("response").get("body").get("items").get("item").get(1).get("obsrValue").asDouble());
                 this.setAPI_temp(jsonNode.get("response").get("body").get("items").get("item").get(3).get("obsrValue").asDouble());
                 System.out.println("\nAPI_humid: " + this.getAPI_humid()+"% , API_temp: " + this.getAPI_temp());
