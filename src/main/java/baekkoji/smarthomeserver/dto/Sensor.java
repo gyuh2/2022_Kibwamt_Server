@@ -17,7 +17,7 @@ public class Sensor
 {
     private double temp; //실내 온도
     private double humid; //실내 습도
-    private double PM; //실내 미세먼지
+    private double pm; //실내 미세먼지
     private double API_PM; //실외 미세먼지
     private double API_PMGrade; //실외 미세먼지 등급
     private double API_temp; //실외 기온
@@ -36,7 +36,7 @@ public class Sensor
             //실외 미세먼지 등급이 나쁨 이상일 경우
             //미세먼지 농도 수치값 + 경고 알림 앱으로 전송해야함.
         }
-        if(PM>=75.0){
+        if(pm>=75.0){
             //실내 미세먼지 농도가 75 이상일 경우
             //
             //환기팬 작동
@@ -50,7 +50,7 @@ public class Sensor
         try{
             StringBuilder urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
                     "getUltraSrtNcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
-                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220727&base_time=1200&nx=60&ny=127");
+                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220729&base_time=1200&nx=60&ny=127");
             //날짜랑 시간 어떻게 해야할지 의논해야함. 공공데이터 업로드가 어떤 기준으로 되는지 알아보고 매개변수로 받든. 현재시간을 입력하든 알아서.
             URL url = new URL(urlBuilder_tmp.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -116,7 +116,6 @@ public class Sensor
             ObjectMapper objectMapper = new ObjectMapper();
             try{
                 JsonNode jsonNode = objectMapper.readTree(String.valueOf(PMresult));
-
                 this.setAPI_PM((jsonNode.get("response").get("body").get("items").get(0).get("pm10Value").asDouble()));
                 this.setAPI_PMGrade(jsonNode.get("response").get("body").get("items").get(0).get("pm10Grade").asDouble());
                 System.out.println("API_PM: " + this.getAPI_PM()+ " , API_PMGrade: " + this.getAPI_PMGrade());
@@ -127,5 +126,6 @@ public class Sensor
         {
             e.printStackTrace();
         }
+
     }
 }
