@@ -24,13 +24,14 @@ public class SmarthomeServerApplication
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from users");
+        statement.executeUpdate("insert into users(Name) values('junyoung')");
+        /*ResultSet resultSet = statement.executeQuery("select * from users");
 
         resultSet.next();
         String name = resultSet.getString("name");
         System.out.println(name);
 
-        resultSet.close();
+        resultSet.close();*/
         statement.close();
         connection.close();
 

@@ -3,17 +3,24 @@ package baekkoji.smarthomeserver.controller;
 import baekkoji.smarthomeserver.dto.Sensor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
+@ResponseBody
 @RequestMapping("/sensor")
 public class SensorController {
 
-    static int status; // 현재 상태
+    static char status; // 현재 상태
 
     @PostMapping("/set-data")
-    public int setData(@RequestBody Sensor sensor) {
+    public @ResponseBody Map<String,Object> setData(@RequestBody Sensor sensor) {
         System.out.println(sensor); //콘솔 출력
-        status = sensor.ChangeStatus();
-        return status;//Client에게 주는 값
+        Map<String,Object> retVal = new HashMap<String,Object>();
+        //status = sensor.ChangeStatus(); //데이터 처리
+
+        retVal.put("result","success!!");
+        return retVal;
     }
 }
 

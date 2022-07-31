@@ -23,7 +23,7 @@ public class Sensor
     private double API_temp; //실외 기온
     private double API_humid; //실외 습도
 
-    public int ChangeStatus()
+    public char ChangeStatus()
     { // 이 결과값 1이 client에서 서버에 request보내고 받는 응답이야!
         // 자 여기서 데이터 분석을 해봅시다!
         //실내외 온도 차이 15도 이상, 습도 60% 이상, 미세먼지 농도 81 ㎍/㎥ 이상)
@@ -41,7 +41,7 @@ public class Sensor
             //
             //환기팬 작동
         }
-        return 1;
+        return 'a';
     }
 
     public void APIData(String day)
@@ -50,7 +50,7 @@ public class Sensor
         try{
             StringBuilder urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
                     "getUltraSrtNcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
-                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220729&base_time=1200&nx=60&ny=127");
+                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220731&base_time=1200&nx=60&ny=127");
             //날짜랑 시간 어떻게 해야할지 의논해야함. 공공데이터 업로드가 어떤 기준으로 되는지 알아보고 매개변수로 받든. 현재시간을 입력하든 알아서.
             URL url = new URL(urlBuilder_tmp.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
