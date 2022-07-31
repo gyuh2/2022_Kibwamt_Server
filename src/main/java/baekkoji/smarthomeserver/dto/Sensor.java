@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,15 +47,39 @@ public class Sensor
 
     public void APIData(String day)
     {
+        LocalTime now = LocalTime.now();
+        int hour = now.getHour();
+        int minute = now.getMinute();
+        String time = String.valueOf(hour);
+
         StringBuffer Tempresult = new StringBuffer();
-        try{
-            StringBuilder urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
+        StringBuilder urlBuilder_tmp = new StringBuilder();
+        //if(minute>=0 && minute<=40){
+            // 초단기예보 //
+            hour -= 1;
+            time = String.valueOf(hour);
+            //urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
+            //        "getUltraSrtFcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
+            //        "&pageNo=1&numOfRows=100&dataType=JSON&base_date=" + day + "&base_time=" + time +"00&nx=60&ny=127");
+            urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
+                    "&numOfRows=10&pageNo=1&dataType=JSON&base_date="+day+"&base_time="+time+"00&nx=60&ny=127");
+        //}else {
+            // 초단기실황 //
+            // 8시 정보는 8시 30분에 생성되어 8시 40분에 API에 반영이 된다. 40분 보다 더 일찍 반영되는 경우도 있음.
+            // 정시부터 40분전까지는 어떤 정보를 통해 데이터를 분석할지?
+            urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
+                    "&numOfRows=100&pageNo=1&dataType=JSON&base_date="+day+"&base_time="+time+"00&nx=60&ny=127");
+            /*
+            urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
                     "getUltraSrtNcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
-                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=20220731&base_time=1200&nx=60&ny=127");
+                    "&pageNo=1&numOfRows=100&dataType=JSON&base_date=" + day + "&base_time=" + time + "00&nx=60&ny=127");*/
             //날짜랑 시간 어떻게 해야할지 의논해야함. 공공데이터 업로드가 어떤 기준으로 되는지 알아보고 매개변수로 받든. 현재시간을 입력하든 알아서.
+        //}
+        try {
             URL url = new URL(urlBuilder_tmp.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+
             BufferedReader rd;
             if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
                 rd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
@@ -68,11 +93,18 @@ public class Sensor
             rd.close();
             conn.disconnect();
             ObjectMapper objectMapper = new ObjectMapper();
+            // 24번이 temp
             try{
                 JsonNode jsonNode = objectMapper.readTree(String.valueOf(Tempresult));
-                this.setAPI_humid(jsonNode.get("response").get("body").get("items").get("item").get(1).get("obsrValue").asDouble());
-                this.setAPI_temp(jsonNode.get("response").get("body").get("items").get("item").get(3).get("obsrValue").asDouble());
-                System.out.println("\nAPI_humid: " + this.getAPI_humid()+"% , API_temp: " + this.getAPI_temp());
+                //if(minute>=0 && minute<=40) {
+                    this.setAPI_humid(jsonNode.get("response").get("body").get("items").get("item").get(30).get("fcstValue").asDouble());
+                    this.setAPI_temp(jsonNode.get("response").get("body").get("items").get("item").get(24).get("fcstValue").asDouble());
+                    System.out.println("\nAPI_humid: " + this.getAPI_humid() + "% , API_temp: " + this.getAPI_temp() + "℃");
+                //}else {
+                //    this.setAPI_humid(jsonNode.get("response").get("body").get("items").get("item").get(1).get("obsrValue").asDouble());
+                //    this.setAPI_temp(jsonNode.get("response").get("body").get("items").get("item").get(3).get("obsrValue").asDouble());
+                //    System.out.println("\nAPI_humid: " + this.getAPI_humid() + "% , API_temp: " + this.getAPI_temp() + "℃");
+                //}
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -85,7 +117,8 @@ public class Sensor
         StringBuffer PMresult = new StringBuffer();
         try
         {
-            //종로구를 매개변수로 받아야함. 사용자별로 거주지가 상이하기 때문이다. 추후에 의논예정.
+            // 측정소별 실시간 측정정보 조회 //
+            // 종로구를 매개변수로 받아야함. 사용자별로 거주지가 상이하기 때문이다. 추후에 의논예정.
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
             urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode("종로구", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("dataTerm", "UTF-8") + "=" + URLEncoder.encode("DAILY", "UTF-8"));

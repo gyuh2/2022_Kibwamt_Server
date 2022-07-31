@@ -18,7 +18,7 @@ public class SmarthomeServerApplication
 
     public static void main(String[] args) throws SQLException {
 
-        String url = "jdbc:mysql://localhost:3307/SmartHome";
+        String url = "jdbc:mysql://localhost:3306/SmartHome";
         String userName = "root";
         String password = "1234";
 
@@ -39,7 +39,8 @@ public class SmarthomeServerApplication
 
         SpringApplication.run(SmarthomeServerApplication.class, args);
         Sensor sensor = new Sensor();
-        String day_join; // 오늘날짜 저장할 변수
+
+        String day_join; //오늘 날짜 저장
         Date today = new Date();
         SimpleDateFormat today_format = new SimpleDateFormat("yyyyMMdd");
         day_join = today_format.format(today);
