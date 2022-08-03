@@ -11,16 +11,13 @@ import java.util.Map;
 @RequestMapping("/sensor")
 public class SensorController {
 
-    static char status; // 현재 상태
+    static int status; // 현재 상태
 
     @PostMapping("/set-data")
-    public @ResponseBody Map<String,Object> setData(@RequestBody Sensor sensor) {
+    public @ResponseBody int setData(@RequestBody Sensor sensor) {
         System.out.println(sensor); //콘솔 출력
-        Map<String,Object> retVal = new HashMap<String,Object>();
-        //status = sensor.ChangeStatus(); //데이터 처리
-
-        retVal.put("result","success!!");
-        return retVal;
+        status = sensor.ChangeStatus(); //데이터 처리한 값 저장.
+        return status; // 아두이노 request에 대한 응답.
     }
 }
 

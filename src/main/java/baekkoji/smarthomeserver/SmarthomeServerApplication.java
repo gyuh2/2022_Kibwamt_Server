@@ -18,7 +18,7 @@ public class SmarthomeServerApplication
 
     public static void main(String[] args) throws SQLException {
 
-        String url = "jdbc:mysql://localhost:3306/SmartHome";
+        String url = "jdbc:mysql://localhost:3307/SmartHome";
         String userName = "root";
         String password = "1234";
 

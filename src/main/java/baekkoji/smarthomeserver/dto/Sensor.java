@@ -18,31 +18,27 @@ public class Sensor
 {
     private double temp; //실내 온도
     private double humid; //실내 습도
-    private double pm; //실내 미세먼지
+    private double pm; //실내 미세먼지/
+    private int pmGrade; // 실내 미세먼지 등급
     private double API_PM; //실외 미세먼지
-    private double API_PMGrade; //실외 미세먼지 등급
+    private int API_PMGrade; //실외 미세먼지 등급
     private double API_temp; //실외 기온
     private double API_humid; //실외 습도
 
-    public char ChangeStatus()
-    { // 이 결과값 1이 client에서 서버에 request보내고 받는 응답이야!
-        // 자 여기서 데이터 분석을 해봅시다!
-        //실내외 온도 차이 15도 이상, 습도 60% 이상, 미세먼지 농도 81 ㎍/㎥ 이상)
+    public int ChangeStatus()
+    {
+        //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 75㎍/㎥ 이상, 실외 는 81 이상)
         //API 참조해야해!
         if(temp-API_temp>=15 || humid>=60){
-            //실내,외 온도 차이가 15도 이상이거나 실내 습도 60%이상일 경우
-            //환기팬 작동
+            return 1; //환기팬 작동
         }
-        if(API_PMGrade>=3.0){
-            //실외 미세먼지 등급이 나쁨 이상일 경우
-            //미세먼지 농도 수치값 + 경고 알림 앱으로 전송해야함.
-        }
+        
         if(pm>=75.0){
-            //실내 미세먼지 농도가 75 이상일 경우
-            //
-            //환기팬 작동
+            //DB에 실내 미세먼지 등급을 (pmGrade) 3으로 저장.
+            //실링팬 작동
+            return 2;
         }
-        return 'a';
+        return 0;
     }
 
     public void APIData(String day)
@@ -145,7 +141,7 @@ public class Sensor
             try{
                 JsonNode jsonNode = objectMapper.readTree(String.valueOf(PMresult));
                 this.setAPI_PM((jsonNode.get("response").get("body").get("items").get(0).get("pm10Value").asDouble()));
-                this.setAPI_PMGrade(jsonNode.get("response").get("body").get("items").get(0).get("pm10Grade").asDouble());
+                this.setAPI_PMGrade(jsonNode.get("response").get("body").get("items").get(0).get("pm10Grade").asInt());
                 System.out.println("API_PM: " + this.getAPI_PM()+ " , API_PMGrade: " + this.getAPI_PMGrade());
             }catch (Exception e) {
                 e.printStackTrace();
