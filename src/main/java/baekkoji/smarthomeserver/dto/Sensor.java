@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,9 +45,13 @@ public class Sensor
     public void APIData(String day)
     {
         LocalTime now = LocalTime.now();
-        int hour = now.getHour(); //현재 시간
+        //int hour = now.getHour(); //현재 시간
         int minute = now.getMinute(); //현재 분
-        String time = String.valueOf(hour);
+        //String time = String.valueOf(hour);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH");
+        String time = now.format(formatter);
+        int hour = Integer.parseInt(time);
 
         StringBuffer Tempresult = new StringBuffer();
         StringBuilder urlBuilder_tmp = new StringBuilder();
@@ -54,7 +59,8 @@ public class Sensor
         if(minute>=0 && minute<=40){
             // 초단기예보 //
             hour -= 1; //초딘기예보에서는 현재 시간에서 -1시간을 해야함.
-            time = String.valueOf(hour);
+            //time = String.valueOf(hour);
+            time = String.format("%02d", hour);
             urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
                     "&numOfRows=100&pageNo=1&dataType=JSON&base_date="+day+"&base_time="+time+"00&nx=60&ny=127");
         }else {
