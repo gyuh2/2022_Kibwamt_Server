@@ -1,5 +1,7 @@
 package baekkoji.smarthomeserver.dto;
 
+import org.json.JSONObject;
+
 public class user {
 
     private String id;
@@ -9,15 +11,15 @@ public class user {
     private String addressDetail;
     private String authPoint;
 
-    public String jsonData() {
-        return "{" +
-                "\"id\":" + id +
-                ", \"passwd\":" + passwd +
-                ", \"name\":" + name +
-                ", \"address\":" + address +
-                ", \"addressDetail\":" + addressDetail +
-                ", \"authPoint\":" + authPoint +
-                '}';
+    public JSONObject jsonData() {
+        JSONObject jsonObject =new JSONObject();
+        jsonObject.put("id", "sally");
+        jsonObject.put("passwd", "1234");
+        jsonObject.put("name", "chayoung");
+        jsonObject.put("address", "seoul");
+        jsonObject.put("adrressDetail", "jon");
+        jsonObject.put("authPoint", "0987");
+        return jsonObject;
     }
 
     public void setName(String name) {
