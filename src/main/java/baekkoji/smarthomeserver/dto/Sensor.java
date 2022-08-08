@@ -29,7 +29,7 @@ public class Sensor
     public int ChangeStatus()
     {
         //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 75㎍/㎥ 이상, 실외는 81 이상)
-        if(temp-API_temp>=15 || humid>=60){
+        if((temp-API_temp>=15) || (humid>=60)){
             if(pm>=75.0){
                 //DB에 실내 미세먼지 등급을 (pmGrade) 3으로 저장.
                 return 1; //환기팬 on, 실링팬 on
