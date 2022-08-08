@@ -2,6 +2,9 @@ package baekkoji.smarthomeserver.dto;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class user {
 
     private String id;
@@ -11,15 +14,15 @@ public class user {
     private String addressDetail;
     private String authPoint;
 
-    public JSONObject jsonData() {
-        JSONObject jsonObject =new JSONObject();
-        jsonObject.put("id", "sally");
-        jsonObject.put("passwd", "1234");
-        jsonObject.put("name", "chayoung");
-        jsonObject.put("address", "seoul");
-        jsonObject.put("adrressDetail", "jon");
-        jsonObject.put("authPoint", "0987");
-        return jsonObject;
+    public Map<String,String> Userdata() {
+        Map<String, String> Userdata= new HashMap<>();
+        Userdata.put("id", "sally");
+        Userdata.put("passwd", "1234");
+        Userdata.put("name", "chayoung");
+        Userdata.put("address", "seoul");
+        Userdata.put("adrressDetail", "jon");
+        Userdata.put("authPoint", "0987");
+        return Userdata;
     }
 
     public void setName(String name) {
