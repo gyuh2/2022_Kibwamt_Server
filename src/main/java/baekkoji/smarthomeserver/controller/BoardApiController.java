@@ -16,12 +16,11 @@ import java.util.Map;
 public class BoardApiController {
 
     static Map<String, String> Userdata= new HashMap<>();
-    @Autowired
-    private BoardApiController repository;
 
     @GetMapping("/boards")
-    public @ResponseBody Map<String,String> setData(@RequestBody user person) {
+    public @ResponseBody Map<String,String> setData() {
         //System.out.println(person); //콘솔 출력
+        user person = new user();
         Userdata = person.Userdata(); //데이터 처리한 값 저장.
         return Userdata; // 아두이노 request에 대한 응답.
     }
