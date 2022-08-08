@@ -17,7 +17,7 @@ public class BoardApiController {
 
     static Map<String, String> Userdata= new HashMap<>();
 
-    @GetMapping("/boards")
+    @GetMapping("/users")
     public @ResponseBody Map<String,String> setData() {
         //System.out.println(person); //콘솔 출력
         user person = new user();
