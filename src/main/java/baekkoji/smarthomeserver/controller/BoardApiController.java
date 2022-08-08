@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @ResponseBody
-@RequestMapping("/api")
+@RequestMapping(value="/url", method=RequestMethod.GET)
 
 public class BoardApiController {
 
