@@ -29,10 +29,10 @@ public class SmarthomeServerApplication
         Statement statement = connection.createStatement();
         //insert가 되는지 test한 코드로 주석을 제거하고 1번만 실행하여 잘 반영 되었는지 확인만 해주세요.//
         //statement.executeUpdate("insert into users(Name) values('gyuhee')");
-        ResultSet resultSet = statement.executeQuery("select * from Users");
+        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo");
 
         while(resultSet.next()) {
-            String name = resultSet.getString("name");
+            String name = resultSet.getString("temp");
             System.out.println(name);
         }
 

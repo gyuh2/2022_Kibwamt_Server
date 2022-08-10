@@ -28,7 +28,7 @@ public class HomeDataInfo {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from Users");
+        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo");
 
         while(resultSet.next()) {
             int pm = Integer.getInteger(resultSet.getString("pm"));
@@ -44,10 +44,6 @@ public class HomeDataInfo {
             HomeData.put("API_PM", resultSet.getString("API_PM"));
             HomeData.put("API_PMGrade", resultSet.getString("API_PMGrade"));
 
-            if(pm>=71){ // 미세먼지 농도가 실내 75이상 / 실외 81이상 일 경우 경고 알림.
-                // 실내 미세먼지 경고 알림.
-                HomeData.put("pmWarn", "1");
-            }
             if(API_PMGrade>=3){
                 // 실외 미세먼지 경고 알림.
                 HomeData.put("API_pmWarn", "1");
@@ -56,16 +52,6 @@ public class HomeDataInfo {
         resultSet.close();
         statement.close();
         connection.close();
-
-        /*HomeData.put("id", "sally");
-        HomeData.put("temp", "22.0");
-        HomeData.put("humid", "65.0");
-        HomeData.put("pm", "12.98");
-        HomeData.put("pmGrade", "1");
-        HomeData.put("API_PM", "14.0");
-        HomeData.put("API_PMGrade", "1");
-        HomeData.put("API_temp", "26.0");
-        HomeData.put("API_humid", "90.0");*/
         return HomeData;
     }
 
