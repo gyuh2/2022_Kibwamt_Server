@@ -18,7 +18,7 @@ public class BoardApiController {
 
     public static user person = new user(); //회원정보 클래스 생성
     public static HomeDataInfo home = new HomeDataInfo(); //스마트홈 데이터 클래스 생성
-    
+
     @GetMapping("/users/getUsers") // 앱이 서버에게 회원정보 참조 요청
     public @ResponseBody Map<String,String> sendData() throws SQLException{
         Map<String, String> Userdata = new HashMap<>();
@@ -32,9 +32,9 @@ public class BoardApiController {
         return result; //앱에게 수정 여부 반환
     }
     
-    @GetMapping("/home/getDatas") // 앱이 서버에게 홈데이터 수정 요청
-    public @ResponseBody Map<String,String> getData() throws SQLException {
-        Map<String, String> HomeData = new HashMap<>();
+    @GetMapping("/home/getDatas") // 앱이 서버에게 홈데이터 요청
+    public @ResponseBody Map<String,Float> getData() throws SQLException {
+        Map<String, Float> HomeData = new HashMap<>();
         HomeData = home.getHomeDataInfo();
         return HomeData; // 앱에 홈 데이터 반환
     }
