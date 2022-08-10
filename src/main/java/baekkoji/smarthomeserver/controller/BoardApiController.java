@@ -36,6 +36,7 @@ public class BoardApiController {
     public @ResponseBody Map<String,Float> getData() throws SQLException {
         Map<String, Float> HomeData = new HashMap<>();
         HomeData = home.getHomeDataInfo();
+        home.toString();
         return HomeData; // 앱에 홈 데이터 반환
     }
 
