@@ -19,39 +19,44 @@ public class Sensor
 {
     private double temp; //실내 온도
     private double humid; //실내 습도
-    private double pm; //실내 미세먼지/
+    private double pm; //실내 미세먼지
     private int pmGrade; // 실내 미세먼지 등급
     private double API_PM; //실외 미세먼지
     private int API_PMGrade; //실외 미세먼지 등급
     private double API_temp; //실외 기온
     private double API_humid; //실외 습도
 
-    public int ChangeStatus()
+    public void setPmGrade(){
+        //10, 10-15, 15-22.5 , 22.5-30
+            //실내 미세먼지를 좋음 보통 나쁨 기준이..
+    }
+    public String ChangeStatus()
     {
         //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 75㎍/㎥ 이상, 실외는 81 이상)
-        if((temp-API_temp>=15) || (humid>=60)){
-            if(pm>=75.0){
-                //DB에 실내 미세먼지 등급을 (pmGrade) 3으로 저장.
-                return 1; //환기팬 on, 실링팬 on
+        if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
+            if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨.
+                return "1a"; //환기팬 on, 실링팬 on
             }else {
-                return 2; //환기팬 on, 실링팬 off
+                return "2b"; //환기팬 on, 실링팬 off
             }
         }else {
-            if (pm >= 75.0) {
-                //DB에 실내 미세먼지 등급을 (pmGrade) 3으로 저장.
-                return 3; //환기팬 off, 실링팬 on
+            if (pm >= 15.0) {
+                return "3c"; //환기팬 off, 실링팬 on
             } else {
-                return 4; //환기팬 off, 실링팬 off
+                return "4c"; //환기팬 off, 실링팬 off
             }
         }
     }
 
-    public void APIData(String day)
+    public void APIData()
     {
+        String day; //오늘 날짜 저장
+        Date today = new Date(); //날짜 형식
+        SimpleDateFormat today_format = new SimpleDateFormat("yyyyMMdd");
+        day = today_format.format(today); //날짜 형식에 맞게 저장.
+
         LocalTime now = LocalTime.now();
-        //int hour = now.getHour(); //현재 시간
         int minute = now.getMinute(); //현재 분
-        //String time = String.valueOf(hour);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH");
         String time = now.format(formatter);
