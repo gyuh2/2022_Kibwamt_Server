@@ -1,5 +1,6 @@
 package baekkoji.smarthomeserver.controller;
 
+import baekkoji.smarthomeserver.dto.ControlData;
 import baekkoji.smarthomeserver.dto.HomeDataInfo;
 import baekkoji.smarthomeserver.dto.Sensor;
 import baekkoji.smarthomeserver.dto.user;
@@ -17,7 +18,8 @@ import java.util.Map;
 public class BoardApiController {
 
     public static user person = new user(); //회원정보 클래스 생성
-    public static HomeDataInfo home = new HomeDataInfo(); //스마트홈 데이터 클래스 생성
+    //public static HomeDataInfo home = new HomeDataInfo(); //스마트홈 데이터 클래스 생성
+    public HomeDataInfo home = new HomeDataInfo();
 
     @GetMapping("/users/getUsers") // 앱이 서버에게 회원정보 참조 요청
     public @ResponseBody Map<String,String> sendData() throws SQLException{
@@ -41,8 +43,8 @@ public class BoardApiController {
     }
 
     @PostMapping("/home/Control") // 앱이 서버에게 기기 제어 요청
-    public @ResponseBody int ControlHome(@RequestBody Map<Integer,Boolean> controlData) throws SQLException{
-        int result = home.controlHome(controlData); // 앱에서 받은 데이터로 DB 수정
+    public @ResponseBody int ControlHome(@RequestBody ControlData controlData) throws SQLException{
+        int result = controlData.controlHome(); // 앱에서 받은 데이터로 DB 수정
         return result; //앱에게 수정 여부 반환
     }
 

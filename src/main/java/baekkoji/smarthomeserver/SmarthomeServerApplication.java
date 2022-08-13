@@ -14,7 +14,7 @@ import java.util.Date;
 
 @SpringBootApplication
 public class SmarthomeServerApplication
-{
+{//느려서 죄삼다
 
     public static void main(String[] args) throws SQLException {
 

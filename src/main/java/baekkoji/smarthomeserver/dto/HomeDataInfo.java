@@ -1,6 +1,7 @@
 package baekkoji.smarthomeserver.dto;
 
 import lombok.Data;
+import org.json.JSONObject;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -54,9 +55,5 @@ public class HomeDataInfo {
         return HomeData;
     }
 
-    public int controlHome(Map<Integer,Boolean> controlData){
-        int result = 0;
 
-        return result;
-    }
 }
