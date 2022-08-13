@@ -42,12 +42,6 @@ public class SmarthomeServerApplication
 
         SpringApplication.run(SmarthomeServerApplication.class, args);
         Sensor sensor = new Sensor();
-
-        String day_join; //오늘 날짜 저장
-        Date today = new Date();
-        SimpleDateFormat today_format = new SimpleDateFormat("yyyyMMdd");
-        day_join = today_format.format(today);
-        sensor.APIData(day_join);
     }
 }
 
