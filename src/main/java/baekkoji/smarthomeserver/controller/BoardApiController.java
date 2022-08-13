@@ -43,8 +43,9 @@ public class BoardApiController {
     }
 
     @PostMapping("/home/Control") // 앱이 서버에게 기기 제어 요청
-    public @ResponseBody int ControlHome(@RequestBody ControlData controlData) throws SQLException{
-        int result = controlData.controlHome(); // 앱에서 받은 데이터로 DB 수정
+    public @ResponseBody String ControlHome(@RequestBody ControlData controlData) throws SQLException{
+        String result = controlData.controlHome(); // 앱에서 받은 데이터로 DB
+        System.out.println(controlData);
         return result; //앱에게 수정 여부 반환
     }
 

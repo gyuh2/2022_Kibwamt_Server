@@ -14,11 +14,11 @@ public class ControlData {
     private boolean airCleaner = false;
     private boolean airOut = false;
 
-    public int controlHome(){
-        int result = 0;
+    public String controlHome(){
+        String result;
         //DB에 저장하고, D 아두이노에 제어 요청을 하고 정상처리 되면 응답을 받아야함.
 
-        result = 1;
+        result = "ok";
         return result;
     }
 }
