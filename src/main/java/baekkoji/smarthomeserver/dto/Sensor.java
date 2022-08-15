@@ -5,10 +5,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,10 +29,53 @@ public class Sensor
     private double API_temp; //실외 기온
     private double API_humid; //실외 습도
 
+    String url = "jdbc:mysql://database-baekkoji.ccp9kadfy1fx.ap-northeast-2.rds.amazonaws.com:3306/smarthome";
+    String userName = "admin";
+    String password = "baekkoji";
+
     public void setPmGrade(){
         //10, 10-15, 15-22.5 , 22.5-30
-            //실내 미세먼지를 좋음 보통 나쁨 기준이..
+        if(pm >= 0.0 && pm < 10.0){
+            this.setPmGrade(1);
+        }else if(pm >= 10.0 && pm < 15.0){
+            this.setPmGrade(2);
+        }else if(pm >= 15.0 && pm < 22.5){
+            this.setPmGrade(3);
+        }else if(pm >= 22.5){
+            this.setPmGrade(4);
+        }else { // pm<0에 해당되는 값 (음수)
+            this.setPmGrade(0);
+        }
     }
+
+    public void setDataAll() throws SQLException {
+        setPmGrade(); //실내 미세먼지 판단 후 변수에 저장.
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+
+        //맨처음에는 insert하고, 그 후에는 update해야함
+        String sql = "update HomeDataInfo set temp=?, humid=?, pm=?, pmGrade=?, API_temp=?, API_humid=?, API_PM=?, API_PMGrade=? where id=?;";
+        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setFloat(1, (float)this.temp);
+        pstmt.setFloat(2, (float)this.humid);
+        pstmt.setFloat(3, (float)this.pm);
+        pstmt.setInt(4, this.pmGrade);
+        pstmt.setFloat(5, (float)this.API_temp);
+        pstmt.setFloat(6, (float)this.API_humid);
+        pstmt.setFloat(7, (float)this.API_PM);
+        pstmt.setInt(8, this.API_PMGrade);
+        pstmt.setString(9, "chayoung"); //id 임의로
+        
+        pstmt.executeUpdate();
+
+        resultSet.close();
+        statement.close();
+        connection.close();
+    }
+
     public String ChangeStatus()
     {
         //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 75㎍/㎥ 이상, 실외는 81 이상)
@@ -166,5 +212,44 @@ public class Sensor
             e.printStackTrace();
         }
 
+    }
+
+    public Map<String,Integer> getControlData() throws SQLException {
+        Map<String,Integer> result = new HashMap<>();
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+
+        String sql= "select * from ControlData where id=?";
+        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setString(1, "chayoung"); //id 임의로
+
+        if(resultSet.next()) {
+            if(resultSet.getBoolean("windowUp")){
+                int angle = resultSet.getInt("angle");
+                result.put("1a",angle);
+            }
+            if(resultSet.getBoolean("heater")){
+                int heater_temp = resultSet.getInt("heater_temp");
+                result.put("2b",heater_temp);
+            }
+            if(resultSet.getBoolean("ac")){
+                int ac_temp = resultSet.getInt("ac_temp");
+                result.put("3c",ac_temp);
+            }
+            if(resultSet.getBoolean("airCleaner")){
+                result.put("4d",0);
+            }
+            if(resultSet.getBoolean("airOut")){
+                result.put("5e",0);
+            }
+        }
+        resultSet.close();
+        statement.close();
+        connection.close();
+
+        return result;
     }
 }

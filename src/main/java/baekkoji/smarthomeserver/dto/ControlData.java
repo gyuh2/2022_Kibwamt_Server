@@ -2,6 +2,8 @@ package baekkoji.smarthomeserver.dto;
 
 import lombok.Data;
 
+import java.sql.*;
+
 @Data
 public class ControlData {
 
@@ -14,9 +16,45 @@ public class ControlData {
     private boolean airCleaner = false;
     private boolean airOut = false;
 
-    public String controlHome(){
-        String result;
-        //DB에 저장하고, D 아두이노에 제어 요청을 하고 정상처리 되면 응답을 받아야함.
+    String url = "jdbc:mysql://database-baekkoji.ccp9kadfy1fx.ap-northeast-2.rds.amazonaws.com:3306/smarthome";
+    String userName = "admin";
+    String password = "baekkoji";
+
+    public String setControlDatal() throws SQLException {
+        String result = "" ;
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+
+        String sql = "update ControlData set ";
+
+        if(windowUp==true) { //window 제어
+            sql+= "windowUp=" + windowUp + ", angle=" + angle;
+        }
+        if(heater==true) {
+            sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
+        }
+        if(ac==true) {
+            sql += "ac=" + ac + ", ac_temp=" + ac_temp;
+        }
+        if(airCleaner==true) {
+            sql += "airCleaner=" + airCleaner;
+        }
+        if(airOut==true) {
+            sql += "airOut=" + airOut;
+        }
+
+        sql += "where id=?;";
+        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setString(1, "chayoung"); //id 임의로
+
+        pstmt.executeUpdate();
+
+        resultSet.close();
+        statement.close();
+        connection.close();
 
         result = "ok";
         return result;
