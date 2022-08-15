@@ -8,7 +8,7 @@ public class ControlData {
     private int angle=0;
     private int ac_temp=0;
     private int heater_temp=0;
-    private boolean window = false;
+    private boolean windowUp = false;
     private boolean heater = false;
     private boolean ac = false;
     private boolean airCleaner = false;
