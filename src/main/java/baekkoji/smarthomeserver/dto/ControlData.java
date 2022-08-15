@@ -20,7 +20,7 @@ public class ControlData {
     String userName = "admin";
     String password = "baekkoji";
 
-    public String setControlDatal() throws SQLException {
+    public String setControlData() throws SQLException {
         String result = "" ;
 
         Connection connection = DriverManager.getConnection(url, userName, password);
