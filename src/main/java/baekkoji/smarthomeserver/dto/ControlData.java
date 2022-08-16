@@ -10,11 +10,11 @@ public class ControlData {
     private int angle=0;
     private int ac_temp=0;
     private int heater_temp=0;
-    private boolean windowUp = false;
-    private boolean heater = false;
-    private boolean ac = false;
-    private boolean airCleaner = false;
-    private boolean airOut = false;
+    private int windowUp =2;
+    private int heater =2;
+    private int ac =2;
+    private int airCleaner =2;
+    private int airOut =2;
 
     String url = "jdbc:mysql://database-baekkoji.ccp9kadfy1fx.ap-northeast-2.rds.amazonaws.com:3306/smarthome";
     String userName = "admin";
@@ -26,33 +26,31 @@ public class ControlData {
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
-        ResultSet resultSet = null;
 
         String sql = "update ControlData set ";
 
-        if(windowUp==true) { //window 제어
+        if(windowUp==1 || windowUp==0) { //window 제어
             sql+= "windowUp=" + windowUp + ", angle=" + angle;
         }
-        if(heater==true) {
+        if(heater==1 || heater==0) {
             sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
         }
-        if(ac==true) {
+        if(ac==1 || ac==0) {
             sql += "ac=" + ac + ", ac_temp=" + ac_temp;
         }
-        if(airCleaner==true) {
+        if(airCleaner==1 || airCleaner==0) {
             sql += "airCleaner=" + airCleaner;
         }
-        if(airOut==true) {
+        if(airOut==1 || airOut==0) {
             sql += "airOut=" + airOut;
         }
 
-        sql += "where id=?;";
-        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        sql += " where id=?";
+        pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, "chayoung"); //id 임의로
 
         pstmt.executeUpdate();
 
-        resultSet.close();
         statement.close();
         connection.close();
 
