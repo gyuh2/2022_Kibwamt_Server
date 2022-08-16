@@ -49,6 +49,7 @@ public class Sensor
     }
 
     public void setDataAll() throws SQLException {
+        if(API_PM==0 || API_PMGrade==0){return;} // 공공데이터 참조 오류날 경우 DB에 저장X
         setPmGrade(); //실내 미세먼지 판단 후 변수에 저장.
 
         Connection connection = DriverManager.getConnection(url, userName, password);
@@ -68,7 +69,7 @@ public class Sensor
         pstmt.setFloat(7, (float)this.API_PM);
         pstmt.setInt(8, this.API_PMGrade);
         pstmt.setString(9, "chayoung"); //id 임의로
-        
+
         pstmt.executeUpdate();
 
         resultSet.close();
@@ -78,7 +79,7 @@ public class Sensor
 
     public String ChangeStatus()
     {
-        //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 75㎍/㎥ 이상, 실외는 81 이상)
+        //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 15㎍/㎥ 이상, 실외는 81 이상)
         if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
             if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨.
                 return "1a"; //환기팬 on, 실링팬 on
