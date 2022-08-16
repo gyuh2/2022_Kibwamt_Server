@@ -44,8 +44,7 @@ public class AppApiController {
     @PostMapping("/home/Control") // 앱이 서버에게 기기 제어 요청
     public @ResponseBody String ControlHome(@RequestBody ControlData controlData) throws SQLException{
         String result = controlData.setControlData(); // 앱에서 받은 데이터 DB에 저장.
-        System.out.println(controlData); // 앱에서 받은 원격제어값 출력
+        //System.out.println(controlData); // 앱에서 받은 원격제어값 출력
         return result; //앱에게 요청에 대한 응답여부 반환 (ok)
     }
-
 }
