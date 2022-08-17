@@ -92,8 +92,7 @@ public class Sensor
         }
     }
 
-    public void APIData()
-    {
+    public void APIData() throws SQLException {
         String day; //오늘 날짜 저장
         Date today = new Date(); //날짜 형식
         SimpleDateFormat today_format = new SimpleDateFormat("yyyyMMdd");
@@ -215,8 +214,23 @@ public class Sensor
 
     }
 
-    private String getAddress() {
+    private String getAddress() throws SQLException {
+        String result ="";
 
-        return "종로구";
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        String sql = "select address from Users where id='baekkoji';";
+
+        ResultSet rs = statement.executeQuery(sql);
+
+        if(rs.next()){
+            result = rs.getString("address");
+        }
+
+        rs.close();
+        statement.close();
+        connection.close();
+
+        return result;
     }
 }
