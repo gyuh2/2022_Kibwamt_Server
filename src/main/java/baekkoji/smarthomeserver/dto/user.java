@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class user {
 
-    private Map id;
+    private String id;
     private String passwd;
     private String name;
     private String address;

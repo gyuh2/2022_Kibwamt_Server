@@ -7,6 +7,7 @@ import java.sql.*;
 @Data
 public class ControlData {
 
+    private String id;
     private int angle = 0;
     private int ac_temp = 0;
     private int heater_temp = 0;

@@ -20,6 +20,7 @@ import lombok.Data;
 @Data
 public class Sensor
 {
+    private String id;
     private double temp; //실내 온도
     private double humid; //실내 습도
     private double pm; //실내 미세먼지
