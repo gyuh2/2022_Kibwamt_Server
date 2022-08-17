@@ -55,7 +55,6 @@ public class Sensor
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
-        ResultSet resultSet = null;
 
         //맨처음에는 insert하고, 그 후에는 update해야함
         String sql = "update HomeDataInfo set temp=?, humid=?, pm=?, pmGrade=?, API_temp=?, API_humid=?, API_PM=?, API_PMGrade=? where id=?;";
@@ -72,7 +71,6 @@ public class Sensor
 
         pstmt.executeUpdate();
 
-        resultSet.close();
         statement.close();
         connection.close();
     }

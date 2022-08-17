@@ -7,18 +7,41 @@ import java.sql.*;
 @Data
 public class ControlData {
 
-    private int angle=0;
-    private int ac_temp=0;
-    private int heater_temp=0;
-    private int windowUp =2;
-    private int heater =2;
-    private int ac =2;
-    private int airCleaner =2;
-    private int airOut =2;
+    private int angle = 0;
+    private int ac_temp = 0;
+    private int heater_temp = 0;
+    private int windowUp = 2;
+    private int heater = 2;
+    private int ac = 2;
+    private int airCleaner = 2;
+    private int airOut = 2;
+    private int door = 2;
+    private String door_passwd = ""; //app에서 넘어온 passwd
 
     String url = "jdbc:mysql://database-baekkoji.ccp9kadfy1fx.ap-northeast-2.rds.amazonaws.com:3306/smarthome";
     String userName = "admin";
     String password = "baekkoji";
+
+    private String getDoorPasswd() throws SQLException{
+        String result ="";
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        String sql = "select door_passwd from ControlData where id='chayoung';";
+        System.out.println(sql);
+
+        ResultSet rs = statement.executeQuery(sql);
+
+        if(rs.next()){
+            result = rs.getString("door_passwd");
+        }
+
+        rs.close();
+        statement.close();
+        connection.close();
+
+        return result;
+    }
 
     public String setControlData() throws SQLException {
         String result = "" ;
@@ -43,6 +66,12 @@ public class ControlData {
         }
         if(airOut==1 || airOut==0) {
             sql += "airOut=" + airOut;
+        }
+        if(door==1 || door==0){
+            String collectPasswd = getDoorPasswd();
+            if(door_passwd.equals(collectPasswd)){
+                sql += "door=" + door;
+            }
         }
 
         sql += " where id=?";

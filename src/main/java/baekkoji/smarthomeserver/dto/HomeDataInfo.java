@@ -29,7 +29,8 @@ public class HomeDataInfo {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo");
+        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo where id='chayoung';");
+        //임의로 id 변경가능.
 
         while(resultSet.next()) {
             float pm = resultSet.getFloat("pm");
