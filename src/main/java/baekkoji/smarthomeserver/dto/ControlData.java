@@ -31,7 +31,7 @@ public class ControlData {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        String sql = "select door_passwd from ControlData where id='chayoung';";
+        String sql = "select door_passwd from ControlData where id='baekkoji';";
         //System.out.println(sql);
 
         ResultSet rs = statement.executeQuery(sql);
@@ -82,7 +82,7 @@ public class ControlData {
 
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
-        pstmt.setString(1, "chayoung"); //id 임의로
+        pstmt.setString(1, "baekkoji"); //id 임의로
 
         pstmt.executeUpdate();
 
@@ -101,7 +101,7 @@ public class ControlData {
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
 
-        String sql= "select * from ControlData where id='chayoung';";
+        String sql= "select * from ControlData where id='baekkoji';";
         ResultSet resultSet = statement.executeQuery(sql);
 
         if(resultSet.next()) {

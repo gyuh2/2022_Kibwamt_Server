@@ -10,8 +10,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,7 +66,7 @@ public class Sensor
         pstmt.setFloat(6, (float)this.API_humid);
         pstmt.setFloat(7, (float)this.API_PM);
         pstmt.setInt(8, this.API_PMGrade);
-        pstmt.setString(9, "chayoung"); //id 임의로
+        pstmt.setString(9, "baekkoji"); //id 임의로
 
         pstmt.executeUpdate();
 
@@ -221,5 +219,4 @@ public class Sensor
 
         return "종로구";
     }
-
 }
