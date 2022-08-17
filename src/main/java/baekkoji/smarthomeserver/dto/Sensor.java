@@ -118,6 +118,7 @@ public class Sensor
             time = String.format("%02d", hour);
             urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
                     "&numOfRows=100&pageNo=1&dataType=JSON&base_date="+day+"&base_time="+time+"00&nx=60&ny=127");
+            //위도 경도도 나중에 DB에서 가져와야 함.
         }else {
             // 초단기실황 //
             // 8시 정보는 8시 30분에 생성되어 8시 40분에 API에 반영이 된다. 40분 보다 더 일찍 반영되는 경우도 있음.
@@ -125,6 +126,7 @@ public class Sensor
             urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +
                     "getUltraSrtNcst?serviceKey=Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D" +
                     "&pageNo=1&numOfRows=100&dataType=JSON&base_date=" + day + "&base_time=" + time + "00&nx=60&ny=127");
+            //위도 경도도 나중에 DB에서 가져와야 함.
         }
         try {
             URL url = new URL(urlBuilder_tmp.toString());
@@ -165,6 +167,7 @@ public class Sensor
         }
 
         //실외 미세먼지 농도랑 등급 참조
+        String address = getAddress();
         StringBuffer PMresult = new StringBuffer();
         try
         {
@@ -172,7 +175,7 @@ public class Sensor
             // 종로구를 매개변수로 받아야함. 사용자별로 거주지가 상이하기 때문이다. 추후에 의논예정.
             //
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
-            urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode("종로구", "UTF-8"));
+            urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode(address, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("dataTerm", "UTF-8") + "=" + URLEncoder.encode("DAILY", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
@@ -214,42 +217,9 @@ public class Sensor
 
     }
 
-    public Map<String,Integer> getControlData() throws SQLException {
-        Map<String,Integer> result = new HashMap<>();
+    private String getAddress() {
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
-        ResultSet resultSet = null;
-
-        String sql= "select * from ControlData where id=?";
-        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        pstmt.setString(1, "chayoung"); //id 임의로
-
-        if(resultSet.next()) {
-            if(resultSet.getBoolean("windowUp")){
-                int angle = resultSet.getInt("angle");
-                result.put("1a",angle);
-            }
-            if(resultSet.getBoolean("heater")){
-                int heater_temp = resultSet.getInt("heater_temp");
-                result.put("2b",heater_temp);
-            }
-            if(resultSet.getBoolean("ac")){
-                int ac_temp = resultSet.getInt("ac_temp");
-                result.put("3c",ac_temp);
-            }
-            if(resultSet.getBoolean("airCleaner")){
-                result.put("4d",0);
-            }
-            if(resultSet.getBoolean("airOut")){
-                result.put("5e",0);
-            }
-        }
-        resultSet.close();
-        statement.close();
-        connection.close();
-
-        return result;
+        return "종로구";
     }
+
 }
