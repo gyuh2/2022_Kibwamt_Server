@@ -133,6 +133,9 @@ public class ControlData {
                 result.put("ac",ac);
                 result.put("ac_temp",ac_temp);
             }
+            if(ac==0){ //OFF
+                result.put("ac",ac);
+            }
             if(airCleaner==1 || airCleaner==0){
                 result.put("airCleaner",airCleaner);
             }
