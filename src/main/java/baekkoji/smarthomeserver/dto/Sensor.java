@@ -74,22 +74,40 @@ public class Sensor
         connection.close();
     }
 
-    public String ChangeStatus()
-    {
+    public String ChangeStatus() throws SQLException {
+        String result = "";
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+
+        String sql = "update ControlData set ";
+
         //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 15㎍/㎥ 이상, 실외는 81 이상)
         if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
             if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨.
-                return "1a"; //환기팬 on, 실링팬 on
+                sql += "airCleaner=1, airOut=1";
+                result =  "1a"; //환기팬 on, 실링팬 on
             }else {
-                return "2b"; //환기팬 on, 실링팬 off
+                sql += "airCleaner=0, airOut=1";
+                result =  "2b"; //환기팬 on, 실링팬 off
             }
         }else {
             if (pm >= 15.0) {
-                return "3c"; //환기팬 off, 실링팬 on
+                sql += "airCleaner=1, airOut=0";
+                result =  "3c"; //환기팬 off, 실링팬 on
             } else {
-                return "4c"; //환기팬 off, 실링팬 off
+                sql += "airCleaner=0, airOut=0";
+                result =  "4c"; //환기팬 off, 실링팬 off
             }
         }
+
+        sql += " where id='baekkoji';";
+        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.executeUpdate();
+
+        statement.close();
+        connection.close();
+        return result;
     }
 
     public void APIData() throws SQLException {
