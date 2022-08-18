@@ -94,8 +94,8 @@ public class ControlData {
     }
 
     // 아두이노가 ControlData Table을 참조하여 원격제어 하기.
-    public Map<String,Integer> getControlData() throws SQLException {
-        Map<String,Integer> result = new HashMap<>();
+    public String getControlData() throws SQLException {
+        String result = "";
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
@@ -114,42 +114,52 @@ public class ControlData {
 
             if(windowUp==1){
                 int angle = resultSet.getInt("angle");
-                result.put("windowUp",windowUp);
-                result.put("angle",angle);
+                result += "windowUp," + windowUp;
+                result += ",angle," + angle;
             }
-            if(windowUp==0){ //OFF
-                result.put("windowUp",windowUp);
+            if(windowUp==0 || windowUp==2){ //OFF
+                result += ",windowUp,0,angle,0";
             }
             if(heater==1){
                 int heater_temp = resultSet.getInt("heater_temp");
-                result.put("heater",heater);
-                result.put("heater_temp",heater_temp);
+                result += ",heater," + heater;
+                result += ",heater_temp," + heater_temp;
             }
-            if(heater==0){ //OFF
-                result.put("heater",heater);
+            if(heater==0 || heater==2){ //OFF
+                result += ",heater,0,heater_temp,0";
             }
             if(ac==1){
                 int ac_temp = resultSet.getInt("ac_temp");
-                result.put("ac",ac);
-                result.put("ac_temp",ac_temp);
+                result += ",ac," + ac;
+                result += ",ac_temp," + ac_temp;
             }
-            if(ac==0){ //OFF
-                result.put("ac",ac);
+            if(ac==0 || ac==2){ //OFF
+                result += ",ac,0,ac_temp,0";
             }
-            if(airCleaner==1 || airCleaner==0){
-                result.put("airCleaner",airCleaner);
+            if(airCleaner==1){
+                result += ",airCleaner," + airCleaner;
             }
-            if(airOut==1 || airOut==0){
-                result.put("airOut",airOut);
+            if(airCleaner==0 || airCleaner==2){
+                result += ",airCleaner,0";
             }
-            if(door==1 || door==0){
-                result.put("door",door);
+            if(airOut==1){
+                result += ",airOut," + airOut;
+            }
+            if(airOut==0 || airOut==2){
+                result += ",airOut,0";
+            }
+            if(door==1){
+                result += ",door," + door + ",";
+            }
+            if(door==0 || door==2){
+                result += ",door,0,";
             }
         }
         resultSet.close();
         statement.close();
         connection.close();
 
+        System.out.println(result);
         return result;
     }
 }

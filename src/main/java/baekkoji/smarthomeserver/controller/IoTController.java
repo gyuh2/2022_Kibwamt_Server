@@ -26,8 +26,8 @@ public class IoTController {
     }
 
     @GetMapping("/get-control-data")
-    public @ResponseBody Map<String,Integer> getControlData() throws SQLException { //아두이노 -> 서버 (원격제어 데이터 참조)
-        Map<String,Integer> result = new HashMap<>();
+    public @ResponseBody String getControlData() throws SQLException { //아두이노 -> 서버 (원격제어 데이터 참조)
+        String result = "";
         ControlData controlData = new ControlData();
         result = controlData.getControlData();
         return result;
