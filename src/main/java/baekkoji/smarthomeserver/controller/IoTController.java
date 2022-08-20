@@ -5,8 +5,6 @@ import baekkoji.smarthomeserver.dto.Sensor;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @ResponseBody

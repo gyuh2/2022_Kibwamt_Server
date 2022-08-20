@@ -79,7 +79,6 @@ public class Sensor
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
-
         String sql = "update ControlData set ";
 
         //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 15㎍/㎥ 이상, 실외는 81 이상)
@@ -100,7 +99,6 @@ public class Sensor
                 result =  "4c"; //환기팬 off, 실링팬 off
             }
         }
-
         sql += " where id='baekkoji';";
         pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pstmt.executeUpdate();
