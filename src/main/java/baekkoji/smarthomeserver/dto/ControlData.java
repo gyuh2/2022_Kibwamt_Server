@@ -110,13 +110,13 @@ public class ControlData {
             sql += "ac=" + ac + ", ac_temp=" + ac_temp;
         }else { return null; }
 
-        if(heater==0 && ac==0) {
-            sql+= "heater=" + heater + ", heater_temp=" + heater_temp + ", ac=" + ac + ", ac_temp=" + ac_temp;
-        }else { return null; }
-
-        if(heater==1 && ac==0) {
+        if(heater==0) {
             sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
         }
+
+        if(ac==0) {
+            sql+= "ac=" + ac + ", ac_temp=" + ac_temp;
+        }else { return null; }
 
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
