@@ -60,12 +60,6 @@ public class ControlData {
         if(windowUp==1 || windowUp==0) { //window 제어
             sql+= "windowUp=" + windowUp + ", angle=" + angle;
         }
-        if(heater==1 || heater==0) {
-            sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
-        }
-        if(ac==1 || ac==0) {
-            sql += "ac=" + ac + ", ac_temp=" + ac_temp;
-        }
         if(airCleaner==1 || airCleaner==0) {
             sql += "airCleaner=" + airCleaner;
         }
@@ -79,7 +73,15 @@ public class ControlData {
                 sql += "door=" + door;
             }
         }
-
+        if(heater==0 && ac==0) {
+            sql+= "heater=" + heater + ", heater_temp=" + heater_temp + ", ac=" + ac + ", ac_temp=" + ac_temp;
+        }else if(heater==1 && ac==0) {
+            sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
+        }else if(heater==0 && ac==1) {
+            sql += "ac=" + ac + ", ac_temp=" + ac_temp;
+        }else {
+            return null;
+        }
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, "baekkoji"); //id 임의로
