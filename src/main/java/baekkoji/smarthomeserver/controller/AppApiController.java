@@ -16,7 +16,6 @@ import java.util.Map;
 @RequestMapping("/api")
 
 public class AppApiController {
-    //
     public static user person = new user(); //회원정보 클래스 생성
     static HomeDataInfo home = new HomeDataInfo();
 

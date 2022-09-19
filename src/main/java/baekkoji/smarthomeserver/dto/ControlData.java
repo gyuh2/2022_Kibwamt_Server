@@ -54,7 +54,6 @@ public class ControlData {
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         String sql = "select " + device + " from ControlData where id='baekkoji';";
-        //System.out.println(sql);
 
         ResultSet rs = statement.executeQuery(sql);
 
