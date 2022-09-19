@@ -3,8 +3,6 @@ package baekkoji.smarthomeserver.dto;
 import lombok.Data;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 public class ControlData {
@@ -108,12 +106,10 @@ public class ControlData {
         if(ac==1 && gatvalue("heater")){
             //에어컨 가동.
             sql += "ac=" + ac + ", ac_temp=" + ac_temp;
-        }else { return null; }
-
+        }
         if(heater==0) {
             sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
         }
-
         if(ac==0) {
             sql+= "ac=" + ac + ", ac_temp=" + ac_temp;
         }else { return null; }
