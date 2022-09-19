@@ -102,7 +102,7 @@ public class Sensor
                 result =  "4c"; //환기팬 off, 실링팬 off
             }
         }
-        sql += " where id='baekkoji';";
+        sql += " where id='(팀명 기재)';";
         pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pstmt.executeUpdate();
 
