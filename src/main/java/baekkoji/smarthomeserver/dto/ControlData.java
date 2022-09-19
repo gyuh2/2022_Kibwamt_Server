@@ -47,6 +47,32 @@ public class ControlData {
         return result;
     }
 
+    private boolean gatvalue(String device) throws SQLException{
+        int value = 2;
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        String sql = "select " + device + " from ControlData where id='baekkoji';";
+        //System.out.println(sql);
+
+        ResultSet rs = statement.executeQuery(sql);
+
+        if(rs.next()){
+            value = rs.getInt(device);
+        }
+
+        rs.close();
+        statement.close();
+        connection.close();
+
+        if(value==1){ // ON일 경우
+            return false;
+        }
+        else {// OFF일 경우
+            return true;
+        }
+    }
+
     // ControlData Table에 앱에서 요청한 원격제어 데이터 저장하기.
     public String setControlData() throws SQLException {
         String result = "" ;
@@ -73,15 +99,23 @@ public class ControlData {
                 sql += "door=" + door;
             }
         }
-        if(heater==0 && ac==0) {
-            sql+= "heater=" + heater + ", heater_temp=" + heater_temp + ", ac=" + ac + ", ac_temp=" + ac_temp;
-        }else if(heater==1 && ac==0) {
+        // heater 키면 에어컨 값 여부 확인
+        if(heater==1 && gatvalue("ac")){
+            //히터 가동.
             sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
-        }else if(heater==0 && ac==1) {
-            sql += "ac=" + ac + ", ac_temp=" + ac_temp;
-        }else {
-            return null;
         }
+        // ac를 키면 히터 값 여부 확인
+        if(ac==1 && gatvalue("heater")){
+            //에어컨 가동.
+            sql += "ac=" + ac + ", ac_temp=" + ac_temp;
+        }
+        if(heater==0) {
+            sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
+        }
+        if(ac==0) {
+            sql+= "ac=" + ac + ", ac_temp=" + ac_temp;
+        }
+
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, "baekkoji"); //id 임의로
