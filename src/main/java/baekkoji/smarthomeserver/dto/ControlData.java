@@ -112,7 +112,7 @@ public class ControlData {
         }
         if(ac==0) {
             sql+= "ac=" + ac + ", ac_temp=" + ac_temp;
-        }else { return null; }
+        }
 
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
