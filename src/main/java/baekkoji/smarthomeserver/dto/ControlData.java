@@ -103,6 +103,7 @@ public class ControlData {
             //히터 가동.
             sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
         }
+
         // ac를 키면 히터 값 여부 확인
         if(ac==1 && gatvalue("heater")){
             //에어컨 가동.
