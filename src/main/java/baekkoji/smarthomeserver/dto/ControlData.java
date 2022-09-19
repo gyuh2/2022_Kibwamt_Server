@@ -3,8 +3,6 @@ package baekkoji.smarthomeserver.dto;
 import lombok.Data;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 public class ControlData {
@@ -26,13 +24,12 @@ public class ControlData {
     String password = "baekkoji";
 
     // ControlData Table에서 id에 해당되는 회원의 도어락 비밀번호를 가져온다.
-    private String getDoorPasswd() throws SQLException{
+    private Boolean whetherCollectDoorPasswd() throws SQLException{
         String result = "";
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         String sql = "select door_passwd from ControlData where id='baekkoji';";
-        //System.out.println(sql);
 
         ResultSet rs = statement.executeQuery(sql);
 
@@ -44,9 +41,13 @@ public class ControlData {
         statement.close();
         connection.close();
 
-        return result;
+        if(this.door_passwd.equals(result)){
+            return true;
+        }
+        return false;
     }
 
+    //매개변수에 따른 속성값 참조하여 분석
     private boolean gatvalue(String device) throws SQLException{
         int value = 2;
 
@@ -73,7 +74,7 @@ public class ControlData {
         }
     }
 
-    // ControlData Table에 앱에서 요청한 원격제어 데이터 저장하기.
+    // 원격제어 데이터 DB 저장.
     public String setControlData() throws SQLException {
         String result = "" ;
 
@@ -93,9 +94,8 @@ public class ControlData {
             sql += "airOut=" + airOut;
         }
         if(door==1 || door==0){
-            String collectPasswd = getDoorPasswd();
-            if(door_passwd.equals(collectPasswd)){
-                // 도어락 비밀번호 여부 확인
+            // 도어락 비밀번호 여부 확인
+            if(whetherCollectDoorPasswd()){
                 sql += "door=" + door;
             }
         }
@@ -108,15 +108,13 @@ public class ControlData {
         if(ac==1 && gatvalue("heater")){
             //에어컨 가동.
             sql += "ac=" + ac + ", ac_temp=" + ac_temp;
-        }else { return null; }
-
+        }
         if(heater==0) {
             sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
         }
-
         if(ac==0) {
             sql+= "ac=" + ac + ", ac_temp=" + ac_temp;
-        }else { return null; }
+        }
 
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
@@ -131,7 +129,7 @@ public class ControlData {
         return result;
     }
 
-    // 아두이노가 ControlData Table을 참조하여 원격제어 하기.
+    // 아두이노가 원격제어 데이터 참조
     public String getControlData() throws SQLException {
         String result = "";
 
