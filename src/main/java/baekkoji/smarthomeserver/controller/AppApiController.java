@@ -20,6 +20,13 @@ public class AppApiController {
     public static user person = new user(); //회원정보 클래스 생성
     static HomeDataInfo home = new HomeDataInfo();
 
+    @GetMapping("/main/getDatas") // 앱 -> 서버 : 메인 페이지 정보 요청
+    public @ResponseBody Map<String,Float> getMainData() throws SQLException {
+        Map<String, Float> MainData = new HashMap<>();
+        MainData = home.getMainDataInfo();
+        return MainData;
+    }
+
     @GetMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조 요청
     public @ResponseBody Map<String,String> sendData() throws SQLException{
         Map<String, String> Userdata = new HashMap<>();
@@ -34,7 +41,7 @@ public class AppApiController {
     }
     
     @GetMapping("/home/getDatas") // 앱 -> 서버 : 홈데이터 요청
-    public @ResponseBody Map<String,Float> getData() throws SQLException {
+    public @ResponseBody Map<String,Float> getHomeData() throws SQLException {
         Map<String, Float> HomeData = new HashMap<>();
         HomeData = home.getHomeDataInfo();
         home.toString();
