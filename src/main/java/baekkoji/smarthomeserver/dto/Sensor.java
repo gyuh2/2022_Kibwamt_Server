@@ -32,6 +32,7 @@ public class Sensor
     String userName = "admin";
     String password = "baekkoji";
 
+    //실내 미세먼지 등급 산출
     public void setPmGrade(){
         //10, 10-15, 15-22.5 , 22.5-30
         if(pm >= 0.0 && pm < 10.0){
@@ -47,6 +48,7 @@ public class Sensor
         }
     }
 
+    // 실내 데이터 DB 저장
     public void setDataAll() throws SQLException {
         if(API_PM==0 || API_PMGrade==0){return;} // 공공데이터 참조 오류날 경우 DB에 저장X
         setPmGrade(); //실내 미세먼지 판단 후 변수에 저장.
@@ -74,7 +76,8 @@ public class Sensor
         connection.close();
     }
 
-    public String ChangeStatus() throws SQLException {
+    //자동제어 함수
+    public String AutoControl() throws SQLException {
         String result = "";
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
@@ -108,7 +111,8 @@ public class Sensor
         return result;
     }
 
-    public void APIData() throws SQLException {
+    // 공공데이터 참조
+    public void getAPIData() throws SQLException {
         String day; //오늘 날짜 저장
         Date today = new Date(); //날짜 형식
         SimpleDateFormat today_format = new SimpleDateFormat("yyyyMMdd");
@@ -230,6 +234,7 @@ public class Sensor
 
     }
 
+    // DB에서 주소 참조
     private String getAddress() throws SQLException {
         String result ="";
 
