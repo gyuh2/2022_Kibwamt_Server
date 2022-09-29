@@ -87,7 +87,6 @@ public class HomeDataInfo {
 
         String day = sdf.format(date);
         String time = sd.format(date);
-
         int pop = 0;
         int sky = 0;
 
