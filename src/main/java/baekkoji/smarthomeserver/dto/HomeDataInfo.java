@@ -57,13 +57,12 @@ public class HomeDataInfo {
     }
 
     // App의 Main 페이지 업데이트를 위한 공공데이터 참조.
-    public Map<String, Float> getMainDataInfo() {
+    public Map<String, Float> getMainDataInfo() throws SQLException {
         Map<String, Float> MainData= new HashMap<>();
+        MainData = this.getHomeDataInfo();
 
-        // 실외 미세먼지, 초미세먼지, 현재날씨, 강수확률, 습도, 온도
+        // 현재날씨, 강수확률
 
-
-        // 실내 미세먼지, 초미세먼지, 습도, 온도
 
         return MainData;
     }
