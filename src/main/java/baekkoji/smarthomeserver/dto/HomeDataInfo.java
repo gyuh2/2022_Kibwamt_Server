@@ -38,15 +38,25 @@ public class HomeDataInfo {
     String userName = "admin";
     String password = "baekkoji";
 
-    public Map<String,Float> getHomeDataInfo() throws SQLException {
+    public Map<String,Float> getHomeDataInfo(String id) throws SQLException {
         Map<String, Float> HomeData= new HashMap<>();
         // 'HomeDataInfo Table'에서 참조해서 HomeData 변수에 저장하여 return
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo where id='baekkoji';");
-        //임의로 id 변경가능.
+        PreparedStatement pstmt = null;
 
+        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo where id='baekkoji';");
+
+        // 주소 참조 위한 코드
+        String sql = "select address from Users where id=?;";
+        pstmt = connection.prepareStatement(sql);
+        pstmt.setString(1, id);
+        ResultSet rs = pstmt.executeQuery();
+
+        if(rs.next()){
+            HomeData.put(resultSet.getString("address"), 1.1F);
+        }
         while(resultSet.next()) {
             float pm = resultSet.getFloat("pm");
             float API_PMGrade =resultSet.getFloat("API_PMGrade");
@@ -65,6 +75,8 @@ public class HomeDataInfo {
                 HomeData.put("API_pmWarn", 1.0F);
             }
         }
+
+
         resultSet.close();
         statement.close();
         connection.close();
@@ -72,10 +84,10 @@ public class HomeDataInfo {
     }
 
     // App의 Main 페이지 업데이트를 위한 공공데이터 참조.
-    public Map<String, Float> getMainDataInfo() throws SQLException {
+    public Map<String, Float> getMainDataInfo(String id) throws SQLException {
 
         Map<String, Float> MainData= new HashMap<>();
-        MainData = this.getHomeDataInfo();
+        MainData = this.getHomeDataInfo(id);
 
         // 현재날씨, 강수확률
         String key = "Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D";//OpenAPI인증키

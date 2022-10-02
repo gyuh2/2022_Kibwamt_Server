@@ -46,17 +46,17 @@ public class AppApiController {
     }
     
     @GetMapping("/home/getDatas") // 앱 -> 서버 : 홈데이터 요청
-    public @ResponseBody Map<String,Float> getHomeData() throws SQLException {
+    public @ResponseBody Map<String,Float> getHomeData(@RequestBody String id) throws SQLException {
         Map<String, Float> HomeData = new HashMap<>();
-        HomeData = home.getHomeDataInfo();
+        HomeData = home.getHomeDataInfo(id);
         home.toString();
         return HomeData; // 앱에 홈 데이터 반환
     }
 
     @GetMapping("/main/getDatas") // 앱 -> 서버 : 메인 페이지 정보
-    public @ResponseBody Map<String,Float> getMainData() throws SQLException {
+    public @ResponseBody Map<String,Float> getMainData(@RequestBody String id) throws SQLException {
         Map<String, Float> MainData = new HashMap<>();
-        MainData = home.getMainDataInfo();
+        MainData = home.getMainDataInfo(id);
         return MainData;
     }
 
