@@ -53,7 +53,7 @@ public class AppApiController {
         return HomeData; // 앱에 홈 데이터 반환
     }
 
-    @GetMapping("/main/getDatas") // 앱 -> 서버 : 메인 페이지 정보
+    @PostMapping("/main/getDatas") // 앱 -> 서버 : 메인 페이지 정보
     public @ResponseBody Map<String,Float> getMainData(@RequestBody String id) throws SQLException {
         Map<String, Float> MainData = new HashMap<>();
         MainData = home.getMainDataInfo(id);
