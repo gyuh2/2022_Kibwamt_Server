@@ -19,16 +19,16 @@ public class AppApiController {
 
 
     @PostMapping ("/users/idCheck") // 앱 -> 서버 : 회원가입 아이디 중복체크
-    public @ResponseBody Boolean checkId(@RequestBody String id) throws SQLException{
+    public @ResponseBody boolean checkId(@RequestBody String id) throws SQLException{
         person.setId(id);
-        Boolean result = person.checkId();
+        boolean result = person.checkId();
         System.out.println("결과 " + result);
         return result;
     }
 
     @PostMapping ("/users/signUp") // 앱 -> 서버 : 회원가입 요청
-    public @ResponseBody int newUser(@RequestBody Map<String,String> users) throws SQLException{
-        int result = person.newSignupUser(users);
+    public @ResponseBody String newUser(@RequestBody Map<String,String> users) throws SQLException{
+        String result = person.newSignupUser(users);
         return result;
     }
 

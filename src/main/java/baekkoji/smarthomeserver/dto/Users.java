@@ -18,7 +18,7 @@ public class Users {
     String userName = "admin";
     String password = "baekkoji";
 
-    public int newSignupUser(Map<String, String> users) throws SQLException {
+    public String newSignupUser(Map<String, String> users) throws SQLException {
         // DB에 user 레코드를 새로 추가 하고, 앱에 성공여부 (1/0)으로 알리기
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
@@ -27,7 +27,6 @@ public class Users {
         String sql = "insert into Users(id, passwd, name, address, addressDetail, authPoint) values(?,?,?,?,?,?)";
 
         try{
-
             pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, users.get("id"));
             pstmt.setString(2, users.get("passwd"));
@@ -39,12 +38,12 @@ public class Users {
             pstmt.executeUpdate();
 
         }catch(Exception e){
-            return 0;
+            return "";
         }
         statement.close();
         connection.close();
 
-        return 1;
+        return "ok";
     }
 
     public Map<String,String> getUserData() { //회원 정보 가져오기
@@ -81,7 +80,7 @@ public class Users {
 
         ResultSet rs = pstmt.executeQuery();
 
-        while(rs.next()){
+        if(rs.next()){ //중복된 아이디값을 가져왔을 경우
             result = true;
         } // end of while();
         System.out.printf("결과" + result);
