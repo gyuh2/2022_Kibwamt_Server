@@ -38,8 +38,8 @@ public class HomeDataInfo {
     String userName = "admin";
     String password = "baekkoji";
 
-    public Map<String,Float> getHomeDataInfo(String id) throws SQLException {
-        Map<String, Float> HomeData= new HashMap<>();
+    public Map<String,String> getHomeDataInfo(String id) throws SQLException {
+        Map<String, String> HomeData= new HashMap<>();
         // 'HomeDataInfo Table'에서 참조해서 HomeData 변수에 저장하여 return
 
         Connection connection = DriverManager.getConnection(url, userName, password);
@@ -55,28 +55,26 @@ public class HomeDataInfo {
         ResultSet rs = pstmt.executeQuery();
 
         if(rs.next()){
-            HomeData.put(resultSet.getString("address"), 1.1F);
+            HomeData.put("address",resultSet.getString("address"));
         }
         while(resultSet.next()) {
-            float pm = resultSet.getFloat("pm");
-            float API_PMGrade =resultSet.getFloat("API_PMGrade");
+            String pm = String.valueOf(resultSet.getFloat("pm"));
+            float API_PMGrade = resultSet.getFloat("API_PMGrade");
 
-            HomeData.put("temp", resultSet.getFloat("temp"));
-            HomeData.put("humid", resultSet.getFloat("humid"));
-            HomeData.put("pm", resultSet.getFloat("pm"));
-            HomeData.put("pmGrade", (float) resultSet.getInt("pmGrade"));
-            HomeData.put("API_temp", resultSet.getFloat("API_temp"));
-            HomeData.put("API_humid", resultSet.getFloat("API_humid"));
-            HomeData.put("API_PM", resultSet.getFloat("API_PM"));
-            HomeData.put("API_PMGrade", (float) resultSet.getInt("API_PMGrade"));
+            HomeData.put("temp", String.valueOf(resultSet.getFloat("temp")));
+            HomeData.put("humid", String.valueOf(resultSet.getFloat("humid")));
+            HomeData.put("pm", String.valueOf(resultSet.getFloat("pm")));
+            HomeData.put("pmGrade", String.valueOf(resultSet.getInt("pmGrade")));
+            HomeData.put("API_temp", String.valueOf(resultSet.getFloat("API_temp")));
+            HomeData.put("API_humid", String.valueOf(resultSet.getFloat("API_humid")));
+            HomeData.put("API_PM", String.valueOf(resultSet.getFloat("API_PM")));
+            HomeData.put("API_PMGrade", String.valueOf(resultSet.getInt("API_PMGrade")));
 
             if(API_PMGrade>=3){
                 // 실외 미세먼지 경고 알림.
-                HomeData.put("API_pmWarn", 1.0F);
+                HomeData.put("API_pmWarn", "1.0F");
             }
         }
-
-
         resultSet.close();
         statement.close();
         connection.close();
@@ -84,9 +82,9 @@ public class HomeDataInfo {
     }
 
     // App의 Main 페이지 업데이트를 위한 공공데이터 참조.
-    public Map<String, Float> getMainDataInfo(String id) throws SQLException {
+    public Map<String, String> getMainDataInfo(String id) throws SQLException {
 
-        Map<String, Float> MainData= new HashMap<>();
+        Map<String, String> MainData= new HashMap<>();
         MainData = this.getHomeDataInfo(id);
 
         // 현재날씨, 강수확률
@@ -130,9 +128,9 @@ public class HomeDataInfo {
             JsonNode jsonNode = objectMapper.readTree(String.valueOf(Tempresult));
             sky = jsonNode.get("response").get("body").get("items").get("item").get(5).get("fcstValue").asInt();
             pop = (jsonNode.get("response").get("body").get("items").get("item").get(7).get("fcstValue").asInt());
-            MainData.put("pop",(float)pop);
-            MainData.put("sky",(float)sky);
-            System.out.println(pop +", " + sky);
+
+            MainData.put("pop",String.valueOf(pop));
+            MainData.put("sky",String.valueOf(sky));
         }catch (Exception e) {
             e.printStackTrace();
         }
