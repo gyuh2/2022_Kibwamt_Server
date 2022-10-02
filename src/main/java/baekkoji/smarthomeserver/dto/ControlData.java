@@ -135,7 +135,7 @@ public class ControlData {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        //PreparedStatement pstmt = null;
 
         String sql= "select * from ControlData where id='baekkoji';";
         ResultSet resultSet = statement.executeQuery(sql);

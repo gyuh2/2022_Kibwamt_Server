@@ -116,8 +116,8 @@ public class HomeDataInfo {
             ObjectMapper objectMapper = new ObjectMapper();
 
             JsonNode jsonNode = objectMapper.readTree(String.valueOf(Tempresult));
-            pop = jsonNode.get("response").get("body").get("items").get("item").get(5).get("fcstValue").asInt();
-            sky = (jsonNode.get("response").get("body").get("items").get("item").get(7).get("fcstValue").asInt());
+            sky = jsonNode.get("response").get("body").get("items").get("item").get(5).get("fcstValue").asInt();
+            pop = (jsonNode.get("response").get("body").get("items").get("item").get(7).get("fcstValue").asInt());
             MainData.put("pop",(float)pop);
             MainData.put("sky",(float)sky);
             System.out.println(pop +", " + sky);
