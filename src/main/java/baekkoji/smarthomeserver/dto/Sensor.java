@@ -99,7 +99,7 @@ public class Sensor
                 result =  "3c"; //환기팬 off, 실링팬 on
             } else {
                 sql += "airCleaner=0, airOut=0";
-                result =  "4c"; //환기팬 off, 실링팬 off
+                result =  "4d"; //환기팬 off, 실링팬 off
             }
         }
         sql += " where id='baekkoji';";

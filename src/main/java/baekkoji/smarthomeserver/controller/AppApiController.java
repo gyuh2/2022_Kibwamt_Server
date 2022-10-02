@@ -2,7 +2,7 @@ package baekkoji.smarthomeserver.controller;
 
 import baekkoji.smarthomeserver.dto.ControlData;
 import baekkoji.smarthomeserver.dto.HomeDataInfo;
-import baekkoji.smarthomeserver.dto.user;
+import baekkoji.smarthomeserver.dto.Users;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -14,19 +14,24 @@ import java.util.Map;
 
 public class AppApiController {
 
-    public static user person = new user(); //회원정보 클래스 생성
+    public static Users person = new Users(); //회원정보 클래스 생성
     static HomeDataInfo home = new HomeDataInfo();
 
-
+    @PostMapping ("/users/idCheck") // 앱 -> 서버 : 회원가입 아이디 중복체크
+    public @ResponseBody boolean checkId(@RequestBody String id) throws SQLException{
+        boolean result = person.checkId(id);
+        return result;
+    }
+    
     @PostMapping ("/users/signUp") // 앱 -> 서버 : 회원가입 요청
-    public @ResponseBody int newUser(@RequestBody Map<String,String> user) throws SQLException{
-        int result = person.newSignupUser(user);
+    public @ResponseBody int newUser(@RequestBody Map<String,String> users) throws SQLException{
+        int result = person.newSignupUser(users);
         return result;
     }
 
     @PostMapping("/users/setUsers") // 앱 -> 서버 : 회원정보 수정
-    public @ResponseBody int setUser(@RequestBody Map<String,String> user) throws SQLException{
-        int result = person.setUserData(user); // 앱에서 받은 데이터로 DB 수정
+    public @ResponseBody int setUser(@RequestBody Map<String,String> users) throws SQLException{
+        int result = person.setUserData(users); // 앱에서 받은 데이터로 DB 수정
         return result; //앱에게 수정 여부 반환
     }
 
