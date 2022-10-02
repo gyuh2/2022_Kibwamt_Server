@@ -39,6 +39,7 @@ public class HomeDataInfo {
     String password = "baekkoji";
 
     public Map<String,String> getHomeDataInfo(String id) throws SQLException {
+        id = id.replaceAll("[\"]", "");
         Map<String, String> HomeData= new HashMap<>();
         // 'HomeDataInfo Table'에서 참조해서 HomeData 변수에 저장하여 return
 
@@ -51,11 +52,13 @@ public class HomeDataInfo {
         // 주소 참조 위한 코드
         String sql = "select address from Users where id=?;";
         pstmt = connection.prepareStatement(sql);
+        System.out.println("id " + id);
         pstmt.setString(1, id);
         ResultSet rs = pstmt.executeQuery();
 
         if(rs.next()){
-            HomeData.put("address",resultSet.getString("address"));
+            System.out.println("address" + rs.getString("address"));
+            HomeData.put("address",rs.getString("address"));
         }
         while(resultSet.next()) {
             String pm = String.valueOf(resultSet.getFloat("pm"));
@@ -87,7 +90,7 @@ public class HomeDataInfo {
         Map<String, String> MainData= new HashMap<>();
         MainData = this.getHomeDataInfo(id);
 
-        // 현재날씨, 강수확률
+        //현재날씨, 강수확률
         String key = "Ovk4W7VO%2By140bj6hI2mVl5IAMamS%2BpIhGUfFnxWbnYbXNXMSSsCjVH2G6YTQSGmEf0%2BlGhlAt0Hz6x00dl5Pw%3D%3D";//OpenAPI인증키
 
         long now = System.currentTimeMillis();
@@ -103,7 +106,8 @@ public class HomeDataInfo {
         StringBuffer Tempresult = new StringBuffer();
         StringBuilder urlBuilder_tmp = new StringBuilder();
 
-        urlBuilder_tmp = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +"getVilageFcst?serviceKey=" + key + "&pageNo=1&numOfRows=100&dataType=JSON&base_date=" + day + "&base_time=0500&nx=60&ny=127");
+        urlBuilder_tmp =
+                new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/" +"getVilageFcst?serviceKey=" + key + "&pageNo=1&numOfRows=100&dataType=JSON&base_date=" + day + "&base_time=0500&nx=60&ny=127");
 
         try {
             URL url = new URL(urlBuilder_tmp.toString());
