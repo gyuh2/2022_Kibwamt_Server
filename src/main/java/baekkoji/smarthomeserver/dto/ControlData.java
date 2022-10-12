@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.sql.*;
 
+
 @Data
 public class ControlData {
 
