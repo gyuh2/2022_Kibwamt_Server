@@ -1,5 +1,7 @@
 package baekkoji.smarthomeserver.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.json.JSONObject;
 
@@ -7,20 +9,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-
 
 @Data
 public class HomeDataInfo {
@@ -47,7 +39,7 @@ public class HomeDataInfo {
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
 
-        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo where id='baekkoji';");
+        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo where id='comehome';");
 
         // 주소 참조 위한 코드
         String sql = "select address from Users where id=?;";

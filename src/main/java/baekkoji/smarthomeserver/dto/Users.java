@@ -18,8 +18,32 @@ public class Users {
     String userName = "admin";
     String password = "baekkoji";
 
+    // id 중복  : done
+    public boolean checkId() throws SQLException {
+        id = id.replaceAll("[\"]", "");
+        //System.out.println(id);
+
+        boolean result = false;
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+
+        String sql = "select id from Users where id=?;";
+        pstmt = connection.prepareStatement(sql);
+        pstmt.setString(1, id);
+
+        ResultSet rs = pstmt.executeQuery();
+
+        if(rs.next()){ //중복된 아이디값을 가져왔을 경우
+            result = true;
+        } // end of while();
+        System.out.printf("결과" + result);
+        return result;
+    }
+
+    //회원가입 기능 : done
     public String newSignupUser(Map<String, String> users) throws SQLException {
-        // DB에 user 레코드를 새로 추가 하고, 앱에 성공여부 (1/0)으로 알리기
+        // DB에 user 레코드를 새로 추가 하고, 앱에 성공여부 알리기
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
@@ -46,44 +70,94 @@ public class Users {
         return "ok";
     }
 
-    public Map<String,String> getUserData() { //회원 정보 가져오기
-        Map<String, String> Userdata= new HashMap<>();
-        // 'Users Table'에서 참조해서 Userdata 변수에 저장하여 return
-        return Userdata;
-    }
-
-    public int setUserData(Map<String, String> users){
-        //회원정보 변경 및 등록하기
-        // DB에 user변수 값으로 저장하고, 앱에 성공여부 (1/0)으로 알리기
-        return 1;
-    }
-
-    public int WithdrawUserData(Map<String, String> users){
-        //회원 탈퇴하기
-        // DB에서 passwd 가져와서 확인하고 해당 레코드 정보 삭제하기.
-        return 1;
-    }
-
-    public boolean checkId() throws SQLException {
-        //id.charAt(0);
+    //회원 정보 가져오기 : done
+    public Map<String,String> getUserData(String id) throws SQLException { //회원 정보 가져오기
         id = id.replaceAll("[\"]", "");
-        System.out.println(id);
 
-        boolean result = false;
+        Map<String, String> Userdata= new HashMap<>();
+
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
 
-        String sql = "select id from Users where id=?;";
+        String sql = "select * from Users where id=?;";
         pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, id);
 
         ResultSet rs = pstmt.executeQuery();
 
-        if(rs.next()){ //중복된 아이디값을 가져왔을 경우
-            result = true;
-        } // end of while();
-        System.out.printf("결과" + result);
-        return result;
+        if(rs.next()){
+            Userdata.put("id",id);
+            Userdata.put("passwd",rs.getString("passwd"));
+            Userdata.put("name",rs.getString("name"));
+            Userdata.put("address",rs.getString("address"));
+            Userdata.put("addressDetail",rs.getString("addressDetail"));
+        } // end of if();
+        return Userdata;
+    }
+
+    //회원 정보 변경 : done
+    public boolean setUserData(Map<String, String> users) throws SQLException {
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+
+        String sql = "update Users set passwd=?, name=?, address=?, addressDetail=? where id=?";
+
+        try{
+            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, users.get("passwd"));
+            pstmt.setString(2, users.get("name"));
+            pstmt.setString(3, users.get("address"));
+            pstmt.setString(4, users.get("addressDetail"));
+            pstmt.setString(5, users.get("id"));
+            pstmt.executeUpdate();
+        }catch(Exception e){
+            return false;
+        }
+        statement.close();
+        connection.close();
+
+        return true;
+    }
+
+    //회원 탈퇴하기 : done
+    public boolean WithdrawUserData(String id) throws SQLException {
+        // DB에서 passwd 가져와서 확인하고 해당 레코드 정보 삭제하기.
+        id = id.replaceAll("[\"]", "");
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+
+        String sql = "delete from HomeDataInfo where id=?";
+        try{
+            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, id);
+            pstmt.executeUpdate();
+        }catch(Exception e){
+            return false;
+        }
+
+        sql = "delete from ControlData where id=?";
+        try{
+            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, id);
+            pstmt.executeUpdate();
+        }catch(Exception e){
+            return false;
+        }
+        sql = "delete from Users where id=?";
+        try{
+            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, id);
+            pstmt.executeUpdate();
+        }catch(Exception e){
+            return false;
+        }
+        statement.close();
+        connection.close();
+
+        return true;
     }
 }

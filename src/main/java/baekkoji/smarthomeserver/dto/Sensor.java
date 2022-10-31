@@ -68,7 +68,7 @@ public class Sensor
         pstmt.setFloat(6, (float)this.API_humid);
         pstmt.setFloat(7, (float)this.API_PM);
         pstmt.setInt(8, this.API_PMGrade);
-        pstmt.setString(9, "baekkoji"); //id 임의로
+        pstmt.setString(9, "comehome"); //id 임의로
 
         pstmt.executeUpdate();
 
@@ -102,7 +102,7 @@ public class Sensor
                 result =  "4d"; //환기팬 off, 실링팬 off
             }
         }
-        sql += " where id='baekkoji';";
+        sql += " where id='comehome';";
         pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pstmt.executeUpdate();
 
@@ -238,7 +238,7 @@ public class Sensor
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        String sql = "select address from Users where id='baekkoji';";
+        String sql = "select address from Users where id='comehome';";
 
         ResultSet rs = statement.executeQuery(sql);
 

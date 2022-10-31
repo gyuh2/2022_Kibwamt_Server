@@ -1,10 +1,7 @@
 package baekkoji.smarthomeserver.dto;
 
 import lombok.Data;
-
 import java.sql.*;
-
-
 @Data
 public class ControlData {
 
@@ -30,7 +27,7 @@ public class ControlData {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        String sql = "select door_passwd from ControlData where id='baekkoji';";
+        String sql = "select door_passwd from ControlData where id='comehome';";
 
         ResultSet rs = statement.executeQuery(sql);
 
@@ -54,7 +51,7 @@ public class ControlData {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        String sql = "select " + device + " from ControlData where id='baekkoji';";
+        String sql = "select " + device + " from ControlData where id='comehome';";
 
         ResultSet rs = statement.executeQuery(sql);
 
@@ -119,7 +116,7 @@ public class ControlData {
 
         sql += " where id=?";
         pstmt = connection.prepareStatement(sql);
-        pstmt.setString(1, "baekkoji"); //id 임의로
+        pstmt.setString(1, "comehome"); //id 임의로
 
         pstmt.executeUpdate();
 
@@ -138,7 +135,7 @@ public class ControlData {
         Statement statement = connection.createStatement();
         //PreparedStatement pstmt = null;
 
-        String sql= "select * from ControlData where id='baekkoji';";
+        String sql= "select * from ControlData where id='comehome';";
         ResultSet resultSet = statement.executeQuery(sql);
 
         if(resultSet.next()) {

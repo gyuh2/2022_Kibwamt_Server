@@ -1,7 +1,5 @@
 package baekkoji.smarthomeserver;
 
-import baekkoji.smarthomeserver.dto.HomeDataInfo;
-import baekkoji.smarthomeserver.dto.Users;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
