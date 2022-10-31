@@ -18,27 +18,50 @@ public class Users {
     String userName = "admin";
     String password = "baekkoji";
 
-    // id 중복  : done
-    public boolean checkId() throws SQLException {
+    // 로그인
+    public String login() throws  SQLException{
         id = id.replaceAll("[\"]", "");
-        //System.out.println(id);
+        passwd = passwd.replaceAll("[\"]", "");
 
-        boolean result = false;
+        String result = ""; //로그인이 성공하면 로그인할 id 반환할 예정
+        
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
         PreparedStatement pstmt = null;
 
-        String sql = "select id from Users where id=?;";
+        String sql = "select id,passwd from Users where id=?;";
+        pstmt = connection.prepareStatement(sql);
+        pstmt.setString(1, id);
+
+        ResultSet rs = pstmt.executeQuery();
+
+        if(rs.next()){
+            if(passwd.equals(rs.getString("passwd"))) {
+                result = id;
+            }// end of inner if();
+        } // end of if();
+        return result;
+    }
+
+    // id 중복  : done
+    public boolean checkId() throws SQLException {
+        id = id.replaceAll("[\"]", "");
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        Statement statement = connection.createStatement();
+        PreparedStatement pstmt = null;
+
+        String sql = "select * from Users where id=?;";
         pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, id);
 
         ResultSet rs = pstmt.executeQuery();
 
         if(rs.next()){ //중복된 아이디값을 가져왔을 경우
-            result = true;
-        } // end of while();
-        System.out.printf("결과" + result);
-        return result;
+            return true;
+        } // end of if();
+
+        return false;
     }
 
     //회원가입 기능 : done
