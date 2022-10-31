@@ -68,7 +68,7 @@ public class Sensor
         pstmt.setFloat(6, (float)this.API_humid);
         pstmt.setFloat(7, (float)this.API_PM);
         pstmt.setInt(8, this.API_PMGrade);
-        pstmt.setString(9, "baekkoji"); //id 임의로
+        pstmt.setString(9, "comehome"); //id 임의로
 
         pstmt.executeUpdate();
 
@@ -99,10 +99,10 @@ public class Sensor
                 result =  "3c"; //환기팬 off, 실링팬 on
             } else {
                 sql += "airCleaner=0, airOut=0";
-                result =  "4c"; //환기팬 off, 실링팬 off
+                result =  "4d"; //환기팬 off, 실링팬 off
             }
         }
-        sql += " where id='(팀명 기재)';";
+        sql += " where id='comehome';";
         pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pstmt.executeUpdate();
 
@@ -190,7 +190,6 @@ public class Sensor
         {
             // 측정소별 실시간 측정정보 조회 //
             // 종로구를 매개변수로 받아야함. 사용자별로 거주지가 상이하기 때문이다. 추후에 의논예정.
-            //
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
             urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode(address, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("dataTerm", "UTF-8") + "=" + URLEncoder.encode("DAILY", "UTF-8"));
@@ -231,7 +230,6 @@ public class Sensor
         {
             e.printStackTrace();
         }
-
     }
 
     // DB에서 주소 참조
@@ -240,7 +238,7 @@ public class Sensor
 
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
-        String sql = "select address from Users where id='baekkoji';";
+        String sql = "select address from Users where id='comehome';";
 
         ResultSet rs = statement.executeQuery(sql);
 
