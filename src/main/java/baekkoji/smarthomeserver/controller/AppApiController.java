@@ -31,10 +31,8 @@ public class AppApiController {
     }
 
     @PostMapping ("/users/login") // 앱 -> 서버 : 로그인
-    public @ResponseBody String login(@RequestBody String id, String passwd) throws SQLException{
-        //person.setId(id);
-        //person.setPasswd(passwd);
-        return person.login(id,passwd);
+    public @ResponseBody String login(@RequestBody Map<String,String> data) throws SQLException{
+        return person.login(data.get("id"),data.get("passwd"));
     }
 
 

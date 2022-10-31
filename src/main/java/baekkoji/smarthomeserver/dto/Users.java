@@ -19,11 +19,9 @@ public class Users {
     String password = "baekkoji";
 
     // 로그인
-    public String login(String id, String passwd) throws  SQLException{
-        id = id.replaceAll("[\"]", "");
-        passwd = passwd.replaceAll("[\"]", "");
+    public String login(String id, String passwd) throws SQLException{
 
-        String result = ""; //로그인이 성공하면 로그인할 id 반환할 예정
+        String result = ""; //로그인이 성공하면 반환할 id
         
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
@@ -40,6 +38,7 @@ public class Users {
                 result = id;
             }// end of inner if();
         } // end of if();
+
         return result;
     }
 
