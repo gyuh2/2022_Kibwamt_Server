@@ -4,7 +4,6 @@ import baekkoji.smarthomeserver.dto.ControlData;
 import baekkoji.smarthomeserver.dto.HomeDataInfo;
 import baekkoji.smarthomeserver.dto.Users;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +16,11 @@ public class AppApiController {
     public static Users person = new Users(); //회원정보 클래스 생성
     static HomeDataInfo home = new HomeDataInfo();
 
-    /* 회원 가입 */
+    /* 회원 가입 및 로그인 */
     @PostMapping ("/users/idCheck") // 앱 -> 서버 : 회원가입 아이디 중복체크
     public @ResponseBody boolean checkId(@RequestBody String id) throws SQLException{
         person.setId(id);
         boolean result = person.checkId();
-        System.out.println("결과 " + result);
         return result;
     }
 
@@ -32,6 +30,12 @@ public class AppApiController {
         return result;
     }
 
+    @PostMapping ("/users/login") // 앱 -> 서버 : 로그인
+    public @ResponseBody String login(@RequestBody String id, String passwd) throws SQLException{
+        person.setId(id);
+        person.setPasswd(passwd);
+        return person.login();
+    }
 
     /* 회원 정보 수정 및 탈퇴 */
     @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 수정 전 참조
