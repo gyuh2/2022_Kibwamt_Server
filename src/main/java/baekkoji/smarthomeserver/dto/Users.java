@@ -19,7 +19,7 @@ public class Users {
     String password = "baekkoji";
 
     // 로그인
-    public String login() throws  SQLException{
+    public String login(String id, String passwd) throws  SQLException{
         id = id.replaceAll("[\"]", "");
         passwd = passwd.replaceAll("[\"]", "");
 
@@ -44,7 +44,7 @@ public class Users {
     }
 
     // id 중복  : done
-    public boolean checkId() throws SQLException {
+    public boolean checkId(String id) throws SQLException {
         id = id.replaceAll("[\"]", "");
 
         Connection connection = DriverManager.getConnection(url, userName, password);
