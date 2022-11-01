@@ -31,10 +31,9 @@ public class AppApiController {
     }
 
     @PostMapping ("/users/login") // 앱 -> 서버 : 로그인
-    public @ResponseBody String login(@RequestBody Map<String,String> data) throws SQLException{
+    public @ResponseBody Boolean login(@RequestBody Map<String,String> data) throws SQLException{
         return person.login(data.get("id"),data.get("passwd"));
     }
-
 
     /* 회원 정보 수정 및 탈퇴 */
     @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 수정 전 참조

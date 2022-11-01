@@ -19,9 +19,10 @@ public class Users {
     String password = "baekkoji";
 
     // 로그인
-    public String login(String id, String passwd) throws SQLException{
+    public Boolean login(String id, String passwd) throws SQLException{
 
-        String result = ""; //로그인이 성공하면 반환할 id
+        System.out.println(id+", "+passwd);
+        Boolean result = false; //로그인이 성공하면 반환할 id
         
         Connection connection = DriverManager.getConnection(url, userName, password);
         Statement statement = connection.createStatement();
@@ -35,11 +36,12 @@ public class Users {
 
         if(rs.next()){
             if(passwd.equals(rs.getString("passwd"))) {
-                result = id;
+                result = true;
             }// end of inner if();
         } // end of if();
-
+        System.out.println(result);
         return result;
+
     }
 
     // id 중복  : done
