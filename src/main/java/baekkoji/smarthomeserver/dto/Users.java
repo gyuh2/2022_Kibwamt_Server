@@ -19,9 +19,7 @@ public class Users {
     String password = "baekkoji";
 
     // 로그인
-    public Boolean login(String id, String passwd) throws SQLException{
-
-        System.out.println(id+", "+passwd);
+    public boolean login(String id, String passwd) throws SQLException{
         Boolean result = false; //로그인 성공 여부
 
         try {
@@ -144,6 +142,7 @@ public class Users {
 
     //회원 정보 변경 : done
     public boolean setUserData(Map<String, String> users) throws SQLException {
+        boolean result = false;
 
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
@@ -157,20 +156,23 @@ public class Users {
             pstmt.setString(3, users.get("address"));
             pstmt.setString(4, users.get("addressDetail"));
             pstmt.setString(5, users.get("id"));
-            pstmt.executeUpdate();
+            int i = pstmt.executeUpdate();
 
+            if(i==1){
+                result = true;
+            }
             pstmt.close();
             connection.close();
         }catch(Exception e){
             System.out.println(e);
-            return false;
         }
-        return true;
+        return result;
     }
 
     //회원 탈퇴하기 : done
     public boolean WithdrawUserData(String id, String passwd) throws SQLException {
         // DB에서 passwd 가져와서 확인하고 해당 레코드 정보 삭제하기.
+        boolean result = false;
 
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
@@ -187,17 +189,23 @@ public class Users {
                     sql = "delete from HomeDataInfo where id=?";
                     pstmt = connection.prepareStatement(sql);
                     pstmt.setString(1, id);
-                    pstmt.executeUpdate();
+                    int i = pstmt.executeUpdate();
 
+                    System.out.println("homedatainfo done");
                     sql = "delete from ControlData where id=?";
                     pstmt = connection.prepareStatement(sql);
                     pstmt.setString(1, id);
-                    pstmt.executeUpdate();
+                    i = pstmt.executeUpdate();
 
+                    System.out.println("ControlData done");
                     sql = "delete from Users where id=?";
                     pstmt = connection.prepareStatement(sql);
                     pstmt.setString(1, id);
-                    pstmt.executeUpdate();
+                    i = pstmt.executeUpdate();
+
+                    if(i==1) {
+                        result = true;
+                    }
                 }
             }
 
@@ -205,9 +213,9 @@ public class Users {
             pstmt.close();
             connection.close();
         }catch(Exception e){
-            return false;
+            System.out.println(e);
         }
-        return true;
+        return result;
     }
 
     public void newUserDatas(String id,String door_passwd) throws SQLException {

@@ -52,7 +52,7 @@ public class AppApiController {
 
     @PostMapping("/users/WithdrawUser") // 앱 -> 서버 : 회원 탈퇴
     public @ResponseBody boolean WithdrawUser(@RequestBody Map<String,String> data) throws SQLException{
-        return person.login(data.get("id"),data.get("passwd")); //앱에게 탈퇴 여부 반환
+        return person.WithdrawUserData(data.get("id"),data.get("passwd")); //앱에게 탈퇴 여부 반환
     }
 
 
