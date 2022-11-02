@@ -30,49 +30,57 @@ public class HomeDataInfo {
     String userName = "admin";
     String password = "baekkoji";
 
-    public Map<String,String> getHomeDataInfo(String id) throws SQLException {
+    // homeData 참조
+    public Map<String,String> getHomeDataInfo(String id) {
         id = id.replaceAll("[\"]", "");
         Map<String, String> HomeData= new HashMap<>();
         // 'HomeDataInfo Table'에서 참조해서 HomeData 변수에 저장하여 return
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        ResultSet resultSet = statement.executeQuery("select * from HomeDataInfo where id='comehome';");
+            // 주소 참조 위한 코드
+            String sql = "select address from Users where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
+            ResultSet rs = pstmt.executeQuery();
 
-        // 주소 참조 위한 코드
-        String sql = "select address from Users where id=?;";
-        pstmt = connection.prepareStatement(sql);
-        System.out.println("id " + id);
-        pstmt.setString(1, id);
-        ResultSet rs = pstmt.executeQuery();
-
-        if(rs.next()){
-            System.out.println("address" + rs.getString("address"));
-            HomeData.put("address",rs.getString("address"));
-        }
-        while(resultSet.next()) {
-            String pm = String.valueOf(resultSet.getFloat("pm"));
-            float API_PMGrade = resultSet.getFloat("API_PMGrade");
-
-            HomeData.put("temp", String.valueOf(resultSet.getFloat("temp")));
-            HomeData.put("humid", String.valueOf(resultSet.getFloat("humid")));
-            HomeData.put("pm", String.valueOf(resultSet.getFloat("pm")));
-            HomeData.put("pmGrade", String.valueOf(resultSet.getInt("pmGrade")));
-            HomeData.put("API_temp", String.valueOf(resultSet.getFloat("API_temp")));
-            HomeData.put("API_humid", String.valueOf(resultSet.getFloat("API_humid")));
-            HomeData.put("API_PM", String.valueOf(resultSet.getFloat("API_PM")));
-            HomeData.put("API_PMGrade", String.valueOf(resultSet.getInt("API_PMGrade")));
-
-            if(API_PMGrade>=3){
-                // 실외 미세먼지 경고 알림.
-                HomeData.put("API_pmWarn", "1.0F");
+            if(rs.next()){
+                HomeData.put("address",rs.getString("address"));
             }
+
+            //주소 외에 HomeData 참조
+            sql = "select * from HomeDataInfo where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1,id);
+
+            rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                String pm = String.valueOf(rs.getFloat("pm"));
+                float API_PMGrade = rs.getFloat("API_PMGrade");
+
+                HomeData.put("temp", String.valueOf(rs.getFloat("temp")));
+                HomeData.put("humid", String.valueOf(rs.getFloat("humid")));
+                HomeData.put("pm", String.valueOf(rs.getFloat("pm")));
+                HomeData.put("pmGrade", String.valueOf(rs.getInt("pmGrade")));
+                HomeData.put("API_temp", String.valueOf(rs.getFloat("API_temp")));
+                HomeData.put("API_humid", String.valueOf(rs.getFloat("API_humid")));
+                HomeData.put("API_PM", String.valueOf(rs.getFloat("API_PM")));
+                HomeData.put("API_PMGrade", String.valueOf(rs.getInt("API_PMGrade")));
+
+                if(API_PMGrade>=3){
+                    // 실외 미세먼지 경고 알림.
+                    HomeData.put("API_pmWarn", "1.0F");
+                }
+            }
+            rs.close();
+            pstmt.close();
+            connection.close();
+        }catch (Exception e){
+            System.out.println(e);
         }
-        resultSet.close();
-        statement.close();
-        connection.close();
         return HomeData;
     }
 

@@ -22,60 +22,72 @@ public class Users {
     public Boolean login(String id, String passwd) throws SQLException{
 
         System.out.println(id+", "+passwd);
-        Boolean result = false; //로그인이 성공하면 반환할 id
-        
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        Boolean result = false; //로그인 성공 여부
 
-        String sql = "select id,passwd from Users where id=?;";
-        pstmt = connection.prepareStatement(sql);
-        pstmt.setString(1, id);
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        ResultSet rs = pstmt.executeQuery();
+            String sql = "select id,passwd from Users where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
 
-        if(rs.next()){
-            if(passwd.equals(rs.getString("passwd"))) {
-                result = true;
-            }// end of inner if();
-        } // end of if();
-        System.out.println(result);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                if(passwd.equals(rs.getString("passwd"))) {
+                    result = true;
+                }// end of inner if();
+            } // end of if();
+
+            connection.close();
+            pstmt.close();
+            rs.close();
+        }catch (Exception e){
+            System.out.println(e);
+        }
         return result;
-
     }
 
     // id 중복  : done
     public boolean checkId(String id) throws SQLException {
         id = id.replaceAll("[\"]", "");
+        boolean result = false; // id 중복 여부
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        String sql = "select * from Users where id=?;";
-        pstmt = connection.prepareStatement(sql);
-        pstmt.setString(1, id);
+            String sql = "select * from Users where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
 
-        ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
 
-        if(rs.next()){ //중복된 아이디값을 가져왔을 경우
-            return true;
-        } // end of if();
+            if(rs.next()){ //중복된 아이디값을 가져왔을 경우
+                result = true;
+            } // end of if();
 
-        return false;
+            rs.close();
+            connection.close();
+            pstmt.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return result;
     }
 
     //회원가입 기능 : done
     public String newSignupUser(Map<String, String> users) throws SQLException {
         // DB에 user 레코드를 새로 추가 하고, 앱에 성공여부 알리기
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
-
-        String sql = "insert into Users(id, passwd, name, address, addressDetail, authPoint) values(?,?,?,?,?,?)";
 
         try{
-            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
+
+            String sql = "insert into Users(id, passwd, name, address, addressDetail, authPoint) values(?,?,?,?,?,?)";
+
+            pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, users.get("id"));
             pstmt.setString(2, users.get("passwd"));
             pstmt.setString(3, users.get("name"));
@@ -85,12 +97,15 @@ public class Users {
 
             pstmt.executeUpdate();
 
+            pstmt.close();
+            connection.close();
+
+            String door_passwd = "1234";
+            newUserDatas(users.get("id"),door_passwd);
         }catch(Exception e){
+            System.out.println(e);
             return "";
         }
-        statement.close();
-        connection.close();
-
         return "ok";
     }
 
@@ -100,35 +115,42 @@ public class Users {
 
         Map<String, String> Userdata= new HashMap<>();
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        String sql = "select * from Users where id=?;";
-        pstmt = connection.prepareStatement(sql);
-        pstmt.setString(1, id);
+            String sql = "select * from Users where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
 
-        ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
 
-        if(rs.next()){
-            Userdata.put("id",id);
-            Userdata.put("passwd",rs.getString("passwd"));
-            Userdata.put("name",rs.getString("name"));
-            Userdata.put("address",rs.getString("address"));
-            Userdata.put("addressDetail",rs.getString("addressDetail"));
-        } // end of if();
+            if(rs.next()){
+                Userdata.put("id",rs.getString("id"));
+                Userdata.put("passwd",rs.getString("passwd"));
+                Userdata.put("name",rs.getString("name"));
+                Userdata.put("address",rs.getString("address"));
+                Userdata.put("addressDetail",rs.getString("addressDetail"));
+            } // end of if();
+
+            rs.close();
+            pstmt.close();
+            connection.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
         return Userdata;
     }
 
     //회원 정보 변경 : done
     public boolean setUserData(Map<String, String> users) throws SQLException {
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
 
-        String sql = "update Users set passwd=?, name=?, address=?, addressDetail=? where id=?";
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        try{
+            String sql = "update Users set passwd=?, name=?, address=?, addressDetail=? where id=?";
+
             pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, users.get("passwd"));
             pstmt.setString(2, users.get("name"));
@@ -136,52 +158,80 @@ public class Users {
             pstmt.setString(4, users.get("addressDetail"));
             pstmt.setString(5, users.get("id"));
             pstmt.executeUpdate();
+
+            pstmt.close();
+            connection.close();
         }catch(Exception e){
+            System.out.println(e);
             return false;
         }
-        statement.close();
-        connection.close();
-
         return true;
     }
 
     //회원 탈퇴하기 : done
-    public boolean WithdrawUserData(String id) throws SQLException {
+    public boolean WithdrawUserData(String id, String passwd) throws SQLException {
         // DB에서 passwd 가져와서 확인하고 해당 레코드 정보 삭제하기.
-        id = id.replaceAll("[\"]", "");
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        String sql = "delete from HomeDataInfo where id=?";
-        try{
-            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            String sql = "select * from Users where id=?";
+            pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, id);
-            pstmt.executeUpdate();
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                if(passwd.equals(rs.getString("passwd"))){
+                    sql = "delete from HomeDataInfo where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id);
+                    pstmt.executeUpdate();
+
+                    sql = "delete from ControlData where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id);
+                    pstmt.executeUpdate();
+
+                    sql = "delete from Users where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id);
+                    pstmt.executeUpdate();
+                }
+            }
+
+            rs.close();
+            pstmt.close();
+            connection.close();
         }catch(Exception e){
             return false;
         }
-
-        sql = "delete from ControlData where id=?";
-        try{
-            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, id);
-            pstmt.executeUpdate();
-        }catch(Exception e){
-            return false;
-        }
-        sql = "delete from Users where id=?";
-        try{
-            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, id);
-            pstmt.executeUpdate();
-        }catch(Exception e){
-            return false;
-        }
-        statement.close();
-        connection.close();
-
         return true;
+    }
+
+    public void newUserDatas(String id,String door_passwd) throws SQLException {
+        // homedata table, control table insert하기.
+
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
+
+            String sql = "insert into HomeDataInfo(id) values(?)";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
+            pstmt.executeUpdate();
+
+            sql = "insert into ControlData(id,door_passwd) values(?,?)";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
+            pstmt.setString(2,door_passwd);
+            pstmt.executeUpdate();
+
+            pstmt.close();
+            connection.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 }

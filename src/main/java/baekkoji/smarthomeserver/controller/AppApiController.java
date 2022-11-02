@@ -31,9 +31,10 @@ public class AppApiController {
     }
 
     @PostMapping ("/users/login") // 앱 -> 서버 : 로그인
-    public @ResponseBody Boolean login(@RequestBody Map<String,String> data) throws SQLException{
+    public @ResponseBody boolean login(@RequestBody Map<String,String> data) throws SQLException{
         return person.login(data.get("id"),data.get("passwd"));
     }
+
 
     /* 회원 정보 수정 및 탈퇴 */
     @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 수정 전 참조
@@ -50,9 +51,8 @@ public class AppApiController {
     }
 
     @PostMapping("/users/WithdrawUser") // 앱 -> 서버 : 회원 탈퇴
-    public @ResponseBody boolean WithdrawUser(@RequestBody String id) throws SQLException{
-        boolean result = person.WithdrawUserData(id); // 앱에서 받은 데이터로 DB 레코드 삭제
-        return result; //앱에게 탈퇴 여부 반환
+    public @ResponseBody boolean WithdrawUser(@RequestBody Map<String,String> data) throws SQLException{
+        return person.login(data.get("id"),data.get("passwd")); //앱에게 탈퇴 여부 반환
     }
 
 
