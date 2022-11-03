@@ -50,6 +50,12 @@ public class AppApiController {
         return result; //앱에게 수정 여부 반환
     }
 
+    @PostMapping("/users/setControlDevices") // 앱 -> 서버 : 스마트홈 기기 삭제 및 추가
+    public @ResponseBody boolean editControlDevices(@RequestBody Map<String,String> datas) throws SQLException {
+        boolean result = person.editControlDevices(datas);
+        return result;
+    }
+
     @PostMapping("/users/WithdrawUser") // 앱 -> 서버 : 회원 탈퇴
     public @ResponseBody boolean WithdrawUser(@RequestBody Map<String,String> data) throws SQLException{
         return person.WithdrawUserData(data.get("id"),data.get("passwd")); //앱에게 탈퇴 여부 반환
