@@ -135,9 +135,14 @@ public class HomeDataInfo {
 
             MainData.put("pop",String.valueOf(pop));
             MainData.put("sky",String.valueOf(sky));
+
+            System.out.println(MainData.get("pop"));
+            System.out.println(MainData.get("sky"));
         }catch (Exception e) {
             e.printStackTrace();
         }
         return MainData;
     }
+
+
 }
