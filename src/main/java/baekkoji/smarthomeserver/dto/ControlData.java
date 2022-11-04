@@ -42,7 +42,7 @@ public class ControlData {
             pstmt.close();
             connection.close();
          }catch (Exception e){
-            System.out.println(e);
+            System.out.println("whetherCollectDoorPasswd : "+e);
         }
 
         if(this.door_passwd.equals(result)){
@@ -73,13 +73,43 @@ public class ControlData {
             pstmt.close();
             connection.close();
         }catch (Exception e) {
-            System.out.println(e);
+            System.out.println("gatvalue : "+e);
         }
         if(value==1){ // ON일 경우
             return false;
         }else {// OFF일 경우
             return true;
         }
+    }
+
+    // 각각 기기에 값이 3으로 저장되어 있는지 확인.
+    public boolean isControlDevice(String device) throws SQLException{
+        String id = "comehome";
+        boolean result = false;
+
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        PreparedStatement pstmt = null;
+
+        String sql = "select " + device + " from ControlData where id =?";
+        pstmt = connection.prepareStatement(sql);
+        pstmt.setString(1, id);
+        ResultSet rs = pstmt.executeQuery();
+
+        if(rs.next()){
+            if(rs.getInt(device)!=3){
+                rs.close();
+                pstmt.close();
+                connection.close();
+                result = true;
+            }else {
+                rs.close();
+                pstmt.close();
+                connection.close();
+                result = false;
+            }
+        }
+        System.out.println("result : "+result);
+        return result;
     }
 
     // 원격제어 데이터 DB 저장.
@@ -90,51 +120,123 @@ public class ControlData {
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement pstmt = null;
+
             String sql = "update ControlData set ";
 
-            if(windowUp==1 || windowUp==0) { //window 제어
-                sql+= "windowUp=" + windowUp + ", angle=" + angle;
+            if(windowUp==1 || windowUp==0) {
+                if(isControlDevice("windowUp")) {
+                    sql+= "windowUp=" + windowUp + ", angle=" + angle;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
             if(airCleaner==1 || airCleaner==0) {
-                sql += "airCleaner=" + airCleaner;
+                if(isControlDevice("airCleaner")) {
+                    sql += "airCleaner=" + airCleaner;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
             if(airOut==1 || airOut==0) {
-                sql += "airOut=" + airOut;
+                if(isControlDevice("airOut")) {
+                    sql += "airOut=" + airOut;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
             if(door==1 || door==0){
-                // 도어락 비밀번호 여부 확인
-                if(whetherCollectDoorPasswd()){
-                    sql += "door=" + door;
+                if(isControlDevice("door")) { // 도어락 비밀번호 여부 확인
+                    if(whetherCollectDoorPasswd()){
+                        sql += "door=" + door;
+                        sql += " where id=?";
+                        pstmt = connection.prepareStatement(sql);
+                        pstmt.setString(1, id); //id 임의로
+                        int i = pstmt.executeUpdate();
+                        if(i==1) {
+                            result="ok";
+                        }
+                    }
                 }
             }
             // heater 키면 에어컨 값 여부 확인
-            if(heater==1 && gatvalue("ac")){
-                //히터 가동.
-                sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
+            if(heater==1 && gatvalue("ac")){ //히터 가동.
+                if(isControlDevice("heater")) {
+                    sql += "heater=" + heater + ", heater_temp=" + heater_temp;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
 
             // ac를 키면 히터 값 여부 확인
-            if(ac==1 && gatvalue("heater")){
-                //에어컨 가동.
-                sql += "ac=" + ac + ", ac_temp=" + ac_temp;
+            if(ac==1 && gatvalue("heater")){ //에어컨 가동.
+                if(isControlDevice("ac")) {
+                    sql += "ac=" + ac + ", ac_temp=" + ac_temp;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
             if(heater==0) {
-                sql+= "heater=" + heater + ", heater_temp=" + heater_temp;
+                if(isControlDevice("heater")) {
+                    sql += "heater=" + heater + ", heater_temp=" + heater_temp;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
             if(ac==0) {
-                sql+= "ac=" + ac + ", ac_temp=" + ac_temp;
+                if(isControlDevice("ac")) {
+                    sql += "ac=" + ac + ", ac_temp=" + ac_temp;
+                    sql += " where id=?";
+                    pstmt = connection.prepareStatement(sql);
+                    pstmt.setString(1, id); //id 임의로
+                    int i = pstmt.executeUpdate();
+                    if(i==1) {
+                        result="ok";
+                    }
+                }
             }
-
+/*
             sql += " where id=?";
             pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, id); //id 임의로
-            pstmt.executeUpdate();
-            result = "ok";
-
+            int i = pstmt.executeUpdate();
+            if(i==1) {
+                result="ok";
+            }
+*/
             pstmt.close();
             connection.close();
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println("setControlData : "+e);
         }
         return result;
     }
@@ -209,10 +311,11 @@ public class ControlData {
             pstmt.close();
             connection.close();
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println("getControlData : "+e);
         }
 
         System.out.println(result);
         return result;
     }
+
 }

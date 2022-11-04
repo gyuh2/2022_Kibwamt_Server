@@ -218,9 +218,8 @@ public class Users {
         return result;
     }
 
+    // homedata table, control table insert하기.
     public void newUserDatas(String id,String door_passwd) throws SQLException {
-        // homedata table, control table insert하기.
-
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement pstmt = null;
@@ -241,5 +240,42 @@ public class Users {
         }catch(Exception e){
             System.out.println(e);
         }
+    }
+
+    // 제어할 기기 삭제 및 추가
+    public boolean editControlDevices(Map<String,String> datas) throws SQLException {
+        boolean result = false;
+        String method = datas.get("method"); // delete / add
+        String device = datas.get("device"); // 기기명
+
+        String id = "comehome";
+
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
+
+            String sql ="";
+            if(method.equals("delete")) {
+                sql = "update ControlData set ?=3 where id=?";         // 3의 값은 제어를 하지 않는다고 판단함.
+                sql = "update ControlData set " + device + "=3 where id=?";
+            }else if(method.equals("add")){
+                //sql = "update ControlData set" + "device"+"=2 where id=?";        // 2의 값은 초기값.
+                sql = "update ControlData set " + device + "=2 where id=?";
+            }
+
+            pstmt = connection.prepareStatement(sql);
+            //pstmt.setString(1,device);
+            pstmt.setString(1,id);
+            int i = pstmt.executeUpdate();
+
+            if(i==1) {
+                result = true;
+            }
+            pstmt.close();
+            connection.close();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return result;
     }
 }
