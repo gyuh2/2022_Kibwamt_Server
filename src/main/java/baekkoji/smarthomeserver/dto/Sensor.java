@@ -14,6 +14,7 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import org.json.simple.JSONArray;
 
 @Data
 public class Sensor
@@ -138,6 +139,7 @@ public class Sensor
 
         StringBuffer Tempresult = new StringBuffer();
         StringBuilder urlBuilder_tmp = new StringBuilder();
+        StringBuilder urlBuilder = new StringBuilder();
 
         if(minute>=0 && minute<=40){
             // 초단기예보 //
@@ -196,13 +198,15 @@ public class Sensor
 
         //실외 미세먼지 농도랑 등급 참조
         String address = getAddress();
+        //System.out.println(address);
         StringBuffer PMresult = new StringBuffer();
         try
         {
             // 측정소별 실시간 측정정보 조회 //
             // 종로구를 매개변수로 받아야함. 사용자별로 거주지가 상이하기 때문이다. 추후에 의논예정.
-            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
-            urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode(address, "UTF-8"));
+
+            urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
+            urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode("강남구", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("dataTerm", "UTF-8") + "=" + URLEncoder.encode("DAILY", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
@@ -231,6 +235,7 @@ public class Sensor
             ObjectMapper objectMapper = new ObjectMapper();
             try{
                 JsonNode jsonNode = objectMapper.readTree(String.valueOf(PMresult));
+                //System.out.println(jsonNode);
                 this.setAPI_PM((jsonNode.get("response").get("body").get("items").get(0).get("pm10Value").asDouble()));
                 this.setAPI_PMGrade(jsonNode.get("response").get("body").get("items").get(0).get("pm10Grade").asInt());
                 System.out.println("API_PM: " + this.getAPI_PM()+ " , API_PMGrade: " + this.getAPI_PMGrade());
