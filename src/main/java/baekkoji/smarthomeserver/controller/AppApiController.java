@@ -34,8 +34,7 @@ public class AppApiController {
     public @ResponseBody boolean login(@RequestBody Map<String,String> data) throws SQLException{
         return person.login(data.get("id"),data.get("passwd"));
     }
-
-
+    
     //회원 정보 참조
     /*
     @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조
@@ -71,8 +70,8 @@ public class AppApiController {
         return person.WithdrawUserData(data.get("id"),data.get("passwd")); //앱에게 탈퇴 여부 반환
     }
 
-
-    /* 주요 페이지 기능 */
+    //주요 페이지 기능
+    /*
     @GetMapping("/home/getDatas") // 앱 -> 서버 : 홈데이터 요청
     public @ResponseBody Map<String,String> getHomeData(@RequestBody String id) throws SQLException {
         Map<String, String> HomeData = new HashMap<>();
@@ -80,11 +79,28 @@ public class AppApiController {
         home.toString();
         return HomeData; // 앱에 홈 데이터 반환
     }
-
+    */
+    /*
     @PostMapping("/main/getDatas") // 앱 -> 서버 : 메인 페이지 정보
     public @ResponseBody Map<String,String> getMainData(@RequestBody String id) throws SQLException {
         Map<String, String> MainData = new HashMap<>();
         MainData = home.getMainDataInfo(id);
+        return MainData;
+    }
+    */
+    
+    /* 주요 페이지 기능 */
+    @GetMapping("/home/getData") // 앱 -> 서버 : 홈데이터 요청
+    public @ResponseBody Map<String,String> getHomeData() throws SQLException {
+        Map<String, String> HomeData = new HashMap<>();
+        HomeData = home.getHomeDataInfo();
+        home.toString();
+        return HomeData; // 앱에 홈 데이터 반환
+    }
+    @PostMapping("/main/getData") // 앱 -> 서버 : 메인 페이지 정보
+    public @ResponseBody Map<String,String> getMainData() throws SQLException {
+        Map<String, String> MainData = new HashMap<>();
+        MainData = home.getMainDataInfos();
         return MainData;
     }
 

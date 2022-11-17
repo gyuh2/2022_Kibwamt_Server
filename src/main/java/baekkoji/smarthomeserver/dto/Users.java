@@ -7,7 +7,7 @@ import java.sql.*;
 
 @Data
 public class Users {
-    private String id;
+    private static String id;
     private String passwd;
     private String name;
     private String address;
