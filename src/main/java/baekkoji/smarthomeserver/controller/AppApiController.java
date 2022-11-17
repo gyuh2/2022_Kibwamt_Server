@@ -36,12 +36,22 @@ public class AppApiController {
     }
 
 
-    /* 회원 정보 수정 및 탈퇴 */
-    @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 수정 전 참조
+    //회원 정보 참조
+    /*
+    @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조
     public @ResponseBody Map<String,String> sendData(@RequestBody String id) throws SQLException{
         Map<String, String> Userdata = new HashMap<>();
         Userdata = person.getUserData(id);
         return Userdata; // 수정 페이지에 회원 정보 출력하기 위함.
+    }
+    */
+
+    /* 회원 정보 참조 */
+    @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조
+    public @ResponseBody Map<String,String> sendData() throws SQLException{
+        Map<String, String> Userdata = new HashMap<>();
+        Userdata = person.getUserData();
+        return Userdata; // 수정, 탈퇴 페이지에 회원 정보 출력하기 위함.
     }
 
     @PostMapping("/users/setUsers") // 앱 -> 서버 : 회원정보 수정
