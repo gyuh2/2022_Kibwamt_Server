@@ -105,8 +105,8 @@ public class AppApiController {
     }
 
     @PostMapping("/home/Control") // 앱 -> 서버 : 기기 제어 요청
-    public @ResponseBody String ControlHome(@RequestBody ControlData controlData) throws SQLException{
-        String result = controlData.setControlData(); // 앱에서 받은 데이터 DB에 저장.
-        return result; //앱에 응답여부 반환 (ok)
+    public @ResponseBody int ControlHome(@RequestBody ControlData controlData) throws SQLException{
+        int result = controlData.setControlData(); // 앱에서 받은 데이터 DB에 저장.
+        return result; //앱에 응답여부 반환
     }
 }
