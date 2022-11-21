@@ -7,12 +7,16 @@ import java.sql.*;
 
 @Data
 public class Users {
-    private String id;
+    private static String id;
     private String passwd;
     private String name;
     private String address;
     private String addressDetail;
     private String authPoint;
+
+    public String getId() {
+        return id;
+    }
 
     String url = "jdbc:mysql://database-baekkoji.ccp9kadfy1fx.ap-northeast-2.rds.amazonaws.com:3306/smarthome";
     String userName = "admin";
@@ -35,6 +39,7 @@ public class Users {
             if(rs.next()){
                 if(passwd.equals(rs.getString("passwd"))) {
                     result = true;
+                    this.id = id;
                 }// end of inner if();
             } // end of if();
 
@@ -44,6 +49,7 @@ public class Users {
         }catch (Exception e){
             System.out.println(e);
         }
+        //System.out.println("id는 " + id + ", passwd는 "+ passwd + "결과 값은 " + result);
         return result;
     }
 
@@ -108,8 +114,41 @@ public class Users {
     }
 
     //회원 정보 가져오기 : done
+    /*
     public Map<String,String> getUserData(String id) throws SQLException { //회원 정보 가져오기
         id = id.replaceAll("[\"]", "");
+
+        Map<String, String> Userdata= new HashMap<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
+
+            String sql = "select * from Users where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                Userdata.put("id",rs.getString("id"));
+                Userdata.put("passwd",rs.getString("passwd"));
+                Userdata.put("name",rs.getString("name"));
+                Userdata.put("address",rs.getString("address"));
+                Userdata.put("addressDetail",rs.getString("addressDetail"));
+            } // end of if();
+
+            rs.close();
+            pstmt.close();
+            connection.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return Userdata;
+    }*/
+
+    //회원 정보 반환 : done
+    public Map<String,String> getUserData() throws SQLException { //회원 정보 가져오기
 
         Map<String, String> Userdata= new HashMap<>();
 
@@ -278,4 +317,5 @@ public class Users {
         }
         return result;
     }
+
 }
