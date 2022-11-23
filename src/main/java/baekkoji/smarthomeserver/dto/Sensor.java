@@ -19,7 +19,9 @@ import org.json.simple.JSONArray;
 @Data
 public class Sensor
 {
-    private String id;
+    Users users = new Users();
+
+    private String id = users.getId();
     private double temp; //실내 온도
     private double humid; //실내 습도
     private double pm; //실내 미세먼지
@@ -51,7 +53,7 @@ public class Sensor
 
     // 실내 데이터 DB 저장
     public void setDataAll() throws SQLException {
-        String id = "comehome";
+        //String id = "comehome";
         if(API_PM==0 || API_PMGrade==0){ return;} // 공공데이터 참조 오류날 경우 DB에 저장X
         setPmGrade(); //실내 미세먼지 판단 후 변수에 저장.
 
@@ -83,7 +85,7 @@ public class Sensor
     //자동제어 함수
     public String AutoControl() throws SQLException {
         String result = "";
-        String id = "comehome";
+        //String id = "comehome";
 
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
@@ -91,11 +93,11 @@ public class Sensor
             String sql = "update ControlData set ";
 
             //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 15㎍/㎥ 이상)
-            if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
-                if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨.
+            /*if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
+                if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨. */
                     sql += "airCleaner=1, airOut=1";
                     result =  "1a"; //환기팬 on, 실링팬 on
-                }else {
+               /* }else {
                     sql += "airCleaner=0, airOut=1";
                     result =  "2b"; //환기팬 on, 실링팬 off
                 }
@@ -107,7 +109,7 @@ public class Sensor
                     sql += "airCleaner=0, airOut=0";
                     result =  "4d"; //환기팬 off, 실링팬 off
                 }
-            }
+            } */
             sql += " where id=?;";
 
             pstmt = connection.prepareStatement(sql);
@@ -251,7 +253,7 @@ public class Sensor
     // DB에서 주소 참조
     private String getAddress() throws SQLException {
         String result ="";
-        String id ="comehome";
+        //String id ="comehome";
 
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
