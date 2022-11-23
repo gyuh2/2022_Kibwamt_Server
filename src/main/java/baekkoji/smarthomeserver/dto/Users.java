@@ -287,8 +287,6 @@ public class Users {
         String method = datas.get("method"); // delete / add
         String device = datas.get("device"); // 기기명
 
-        String id = "comehome";
-
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement pstmt = null;
