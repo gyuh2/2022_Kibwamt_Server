@@ -14,6 +14,7 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import org.json.simple.JSONArray;
 
 @Data
 public class Sensor
@@ -50,64 +51,75 @@ public class Sensor
 
     // 실내 데이터 DB 저장
     public void setDataAll() throws SQLException {
-        if(API_PM==0 || API_PMGrade==0){return;} // 공공데이터 참조 오류날 경우 DB에 저장X
+        String id = "comehome";
+        if(API_PM==0 || API_PMGrade==0){ return;} // 공공데이터 참조 오류날 경우 DB에 저장X
         setPmGrade(); //실내 미세먼지 판단 후 변수에 저장.
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        //맨처음에는 insert하고, 그 후에는 update해야함
-        String sql = "update HomeDataInfo set temp=?, humid=?, pm=?, pmGrade=?, API_temp=?, API_humid=?, API_PM=?, API_PMGrade=? where id=?;";
-        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        pstmt.setFloat(1, (float)this.temp);
-        pstmt.setFloat(2, (float)this.humid);
-        pstmt.setFloat(3, (float)this.pm);
-        pstmt.setInt(4, this.pmGrade);
-        pstmt.setFloat(5, (float)this.API_temp);
-        pstmt.setFloat(6, (float)this.API_humid);
-        pstmt.setFloat(7, (float)this.API_PM);
-        pstmt.setInt(8, this.API_PMGrade);
-        pstmt.setString(9, "comehome"); //id 임의로
+            String sql = "update HomeDataInfo set temp=?, humid=?, pm=?, pmGrade=?, API_temp=?, API_humid=?, API_PM=?, API_PMGrade=? where id=?;";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setFloat(1, (float)this.temp);
+            pstmt.setFloat(2, (float)this.humid);
+            pstmt.setFloat(3, (float)this.pm);
+            pstmt.setInt(4, this.pmGrade);
+            pstmt.setFloat(5, (float)this.API_temp);
+            pstmt.setFloat(6, (float)this.API_humid);
+            pstmt.setFloat(7, (float)this.API_PM);
+            pstmt.setInt(8, this.API_PMGrade);
+            pstmt.setString(9, id);
 
-        pstmt.executeUpdate();
+            pstmt.executeUpdate();
 
-        statement.close();
-        connection.close();
+            pstmt.close();
+            connection.close();
+        }catch (Exception e){
+            System.out.println(e);
+        }
     }
 
     //자동제어 함수
     public String AutoControl() throws SQLException {
         String result = "";
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        PreparedStatement pstmt = null;
-        String sql = "update ControlData set ";
+        String id = "comehome";
 
-        //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 15㎍/㎥ 이상, 실외는 81 이상)
-        if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
-            if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨.
-                sql += "airCleaner=1, airOut=1";
-                result =  "1a"; //환기팬 on, 실링팬 on
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
+            String sql = "update ControlData set ";
+
+            //실내외 온도 차이 15도 이상, 습도 60% 이상, 실내 미세먼지 농도 15㎍/㎥ 이상)
+            if( (Math.abs(temp-API_temp)>=15) || (humid>=60)){
+                if(pm>=15.0){ //15 실내 청정기준이므로 15이상일 시 나쁨.
+                    sql += "airCleaner=1, airOut=1";
+                    result =  "1a"; //환기팬 on, 실링팬 on
+                }else {
+                    sql += "airCleaner=0, airOut=1";
+                    result =  "2b"; //환기팬 on, 실링팬 off
+                }
             }else {
-                sql += "airCleaner=0, airOut=1";
-                result =  "2b"; //환기팬 on, 실링팬 off
+                if (pm >= 15.0) {
+                    sql += "airCleaner=1, airOut=0";
+                    result =  "3c"; //환기팬 off, 실링팬 on
+                } else {
+                    sql += "airCleaner=0, airOut=0";
+                    result =  "4d"; //환기팬 off, 실링팬 off
+                }
             }
-        }else {
-            if (pm >= 15.0) {
-                sql += "airCleaner=1, airOut=0";
-                result =  "3c"; //환기팬 off, 실링팬 on
-            } else {
-                sql += "airCleaner=0, airOut=0";
-                result =  "4d"; //환기팬 off, 실링팬 off
-            }
-        }
-        sql += " where id='comehome';";
-        pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        pstmt.executeUpdate();
+            sql += " where id=?;";
 
-        statement.close();
-        connection.close();
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
+
+            pstmt.executeUpdate();
+
+            pstmt.close();
+            connection.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
         return result;
     }
 
@@ -127,6 +139,7 @@ public class Sensor
 
         StringBuffer Tempresult = new StringBuffer();
         StringBuilder urlBuilder_tmp = new StringBuilder();
+        StringBuilder urlBuilder = new StringBuilder();
 
         if(minute>=0 && minute<=40){
             // 초단기예보 //
@@ -185,13 +198,15 @@ public class Sensor
 
         //실외 미세먼지 농도랑 등급 참조
         String address = getAddress();
+        //System.out.println(address);
         StringBuffer PMresult = new StringBuffer();
         try
         {
             // 측정소별 실시간 측정정보 조회 //
             // 종로구를 매개변수로 받아야함. 사용자별로 거주지가 상이하기 때문이다. 추후에 의논예정.
-            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
-            urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode(address, "UTF-8"));
+
+            urlBuilder = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
+            urlBuilder.append("?" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode("강남구", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("dataTerm", "UTF-8") + "=" + URLEncoder.encode("DAILY", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
@@ -220,6 +235,7 @@ public class Sensor
             ObjectMapper objectMapper = new ObjectMapper();
             try{
                 JsonNode jsonNode = objectMapper.readTree(String.valueOf(PMresult));
+                //System.out.println(jsonNode);
                 this.setAPI_PM((jsonNode.get("response").get("body").get("items").get(0).get("pm10Value").asDouble()));
                 this.setAPI_PMGrade(jsonNode.get("response").get("body").get("items").get(0).get("pm10Grade").asInt());
                 System.out.println("API_PM: " + this.getAPI_PM()+ " , API_PMGrade: " + this.getAPI_PMGrade());
@@ -235,21 +251,27 @@ public class Sensor
     // DB에서 주소 참조
     private String getAddress() throws SQLException {
         String result ="";
+        String id ="comehome";
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        String sql = "select address from Users where id='comehome';";
+        try {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = null;
 
-        ResultSet rs = statement.executeQuery(sql);
+            String sql = "select address from Users where id=?";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, id);
 
-        if(rs.next()){
-            result = rs.getString("address");
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                result = rs.getString("address");
+            }
+
+            rs.close();
+            pstmt.close();
+            connection.close();
+        }catch(Exception e){
+            System.out.println(e);
         }
-
-        rs.close();
-        statement.close();
-        connection.close();
-
         return result;
     }
 }

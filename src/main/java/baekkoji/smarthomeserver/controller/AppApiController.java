@@ -31,19 +31,26 @@ public class AppApiController {
     }
 
     @PostMapping ("/users/login") // 앱 -> 서버 : 로그인
-    public @ResponseBody String login(@RequestBody String id, String passwd) throws SQLException{
-        //person.setId(id);
-        //person.setPasswd(passwd);
-        return person.login(id,passwd);
+    public @ResponseBody boolean login(@RequestBody Map<String,String> data) throws SQLException{
+        return person.login(data.get("id"),data.get("passwd"));
     }
-
-
-    /* 회원 정보 수정 및 탈퇴 */
-    @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 수정 전 참조
+    
+    //회원 정보 참조
+    /*
+    @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조
     public @ResponseBody Map<String,String> sendData(@RequestBody String id) throws SQLException{
         Map<String, String> Userdata = new HashMap<>();
         Userdata = person.getUserData(id);
         return Userdata; // 수정 페이지에 회원 정보 출력하기 위함.
+    }
+    */
+
+    /* 회원 정보 참조 */
+    @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조
+    public @ResponseBody Map<String,String> sendData() throws SQLException{
+        Map<String, String> Userdata = new HashMap<>();
+        Userdata = person.getUserData();
+        return Userdata; // 수정, 탈퇴 페이지에 회원 정보 출력하기 위함.
     }
 
     @PostMapping("/users/setUsers") // 앱 -> 서버 : 회원정보 수정
@@ -52,14 +59,19 @@ public class AppApiController {
         return result; //앱에게 수정 여부 반환
     }
 
-    @PostMapping("/users/WithdrawUser") // 앱 -> 서버 : 회원 탈퇴
-    public @ResponseBody boolean WithdrawUser(@RequestBody String id) throws SQLException{
-        boolean result = person.WithdrawUserData(id); // 앱에서 받은 데이터로 DB 레코드 삭제
-        return result; //앱에게 탈퇴 여부 반환
+    @PostMapping("/users/setControlDevices") // 앱 -> 서버 : 스마트홈 기기 삭제 및 추가
+    public @ResponseBody boolean editControlDevices(@RequestBody Map<String,String> datas) throws SQLException {
+        boolean result = person.editControlDevices(datas);
+        return result;
     }
 
+    @PostMapping("/users/WithdrawUser") // 앱 -> 서버 : 회원 탈퇴
+    public @ResponseBody boolean WithdrawUser(@RequestBody Map<String,String> data) throws SQLException{
+        return person.WithdrawUserData(data.get("id"),data.get("passwd")); //앱에게 탈퇴 여부 반환
+    }
 
-    /* 주요 페이지 기능 */
+    //주요 페이지 기능
+    /*
     @GetMapping("/home/getDatas") // 앱 -> 서버 : 홈데이터 요청
     public @ResponseBody Map<String,String> getHomeData(@RequestBody String id) throws SQLException {
         Map<String, String> HomeData = new HashMap<>();
@@ -67,17 +79,34 @@ public class AppApiController {
         home.toString();
         return HomeData; // 앱에 홈 데이터 반환
     }
-
+    */
+    /*
     @PostMapping("/main/getDatas") // 앱 -> 서버 : 메인 페이지 정보
     public @ResponseBody Map<String,String> getMainData(@RequestBody String id) throws SQLException {
         Map<String, String> MainData = new HashMap<>();
         MainData = home.getMainDataInfo(id);
         return MainData;
     }
+    */
+    
+    /* 주요 페이지 기능 */
+    @GetMapping("/home/getData") // 앱 -> 서버 : 홈데이터 요청
+    public @ResponseBody Map<String,String> getHomeData() throws SQLException {
+        Map<String, String> HomeData = new HashMap<>();
+        HomeData = home.getHomeDataInfo();
+        home.toString();
+        return HomeData; // 앱에 홈 데이터 반환
+    }
+    @PostMapping("/main/getData") // 앱 -> 서버 : 메인 페이지 정보
+    public @ResponseBody Map<String,String> getMainData() throws SQLException {
+        Map<String, String> MainData = new HashMap<>();
+        MainData = home.getMainDataInfos();
+        return MainData;
+    }
 
     @PostMapping("/home/Control") // 앱 -> 서버 : 기기 제어 요청
-    public @ResponseBody String ControlHome(@RequestBody ControlData controlData) throws SQLException{
-        String result = controlData.setControlData(); // 앱에서 받은 데이터 DB에 저장.
-        return result; //앱에 응답여부 반환 (ok)
+    public @ResponseBody int ControlHome(@RequestBody ControlData controlData) throws SQLException{
+        int result = controlData.setControlData(); // 앱에서 받은 데이터 DB에 저장.
+        return result; //앱에 응답여부 반환
     }
 }
