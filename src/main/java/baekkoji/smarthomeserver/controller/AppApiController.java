@@ -35,8 +35,7 @@ public class AppApiController {
         return person.login(data.get("id"),data.get("passwd"));
     }
     
-    //회원 정보 참조
-    /*
+    /*회원 정보 참조
     @PostMapping("/users/getUsers") // 앱 -> 서버 : 회원정보 참조
     public @ResponseBody Map<String,String> sendData(@RequestBody String id) throws SQLException{
         Map<String, String> Userdata = new HashMap<>();
